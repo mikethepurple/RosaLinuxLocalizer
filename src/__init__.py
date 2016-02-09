@@ -22,11 +22,16 @@ assert yandex_translate(yandex_api_key, "en-ru",
 
 project_info = [full_project_info(project_group, f) for f in filter_input(inner)]
 
+translated_files = ""
+
 for f in project_info[0][3]:
     print(str(f[0]))
+    translated_files = translated_files + f[0] + "\n"
     for i in f[1]:
         pair = i.split('=')
-        print(str(pair[0] + "=" + pair[1]))
-        print(str(pair[0] + "[ru]=" + yandex_translate(yandex_api_key, "en-ru", pair[1])))
+        translated = str(pair[0] + "[ru]=" + yandex_translate(yandex_api_key, "en-ru", pair[1]))
+        translated_files = translated_files + translated + "\n"
+        print(i)
+        print(translated)
 
-commit_patch(project_info[0][2][1], project_info[0][1], "TRANSLATION")
+commit_patch(project_info[0][2][1], project_info[0][1], translated_files)
