@@ -10,7 +10,6 @@ from abf_interface import get_project_id
 
 def read_desktop(dir_name, file):
     """
-
     :param dir_name:
     :param file:
     :return:
@@ -18,7 +17,8 @@ def read_desktop(dir_name, file):
     va = []
     with open(dir_name + file) as d:
         va.extend(d.read().split("\n"))
-    return [one for one in va if ("Name=" in one or "Comment=" in one) and one[0] != '#']
+    return [one for one in va if
+            ("Name=" in one or "Comment=" in one or "Name[ru]=" in one or "Comment[ru]=" in one) and one[0] != '#']
 
 
 def read_rpm_file(filename):
@@ -43,7 +43,7 @@ def read_rpm_file(filename):
     for (dir_path, dir_names, file_names) in walk(dir_name):
         f.extend([(dir_path + "/" + x)[len(dir_name):] for x in file_names if ".desktop" in x])
 
-    desktop_file_entries = [(line, read_desktop(dir_name, line)) for line in f]
+    desktop_file_entries = [{"path": line, "strings": read_desktop(dir_name, line)} for line in f]
 
     shutil.rmtree(dir_name)
 
@@ -64,10 +64,16 @@ def get_rpm_project_name(filename):
 
 def full_project_info(group, filename):
     """
-
     :param group:
     :param filename:
     :return:
     """
     project_name = get_rpm_project_name(filename)
-    return filename, project_name, get_project_id(group, project_name), read_rpm_file(filename)
+    b, a = get_project_id(group, project_name)
+    file = read_rpm_file(filename)
+    status = 1
+    if len(file) == 0:
+        status = 3
+
+    return {"status": status, "rpm": filename, "package_name": project_name, "git": a, "project_id": b,
+            "desktop_files": file}
