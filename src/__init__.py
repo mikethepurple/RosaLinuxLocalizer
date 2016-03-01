@@ -22,14 +22,14 @@ args = parser.parse_args()
 input_user = json.loads(str(args.json_data))
 
 if input_user["command"] == "translate":
-    print(yandex_translate(yandex_api_key, "en-ru", input_user["data"]))
-elif input_user["command"] == "get_settings":
+    print(yandex_translate(yandex_api_key, "en-ru", input_user["args"]))
+elif input_user["command"] == "getSettings":
     print(load_settings())
-elif input_user["command"] == "set_settings":
-    save_settings(input_user["data"])
+elif input_user["command"] == "setSettings":
+    save_settings(input_user["args"])
     print("{\"result\":\"ok\"}")
 elif input_user["command"] == "import":
-    data = input_user["data"]
+    data = input_user["args"]
     files = []
     if data["type"] == "files":
         files = filter_input(data["values"])
