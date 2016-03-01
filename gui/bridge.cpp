@@ -1,6 +1,7 @@
 #include <QDebug>
 #include <QGraphicsWebView>
 #include <QWebFrame>
+#include <QProcess>
 
 #include "bridge.h"
 
@@ -14,15 +15,36 @@ void Bridge::addToJavaScript() {
 }
 
 
+QString scriptPath = "/home/zimy/Documents/HotProjects/RosaLinuxLocalizer/src/__init__.py";
+
+
 QString Bridge::getTranslation(const QString &text) {
     qDebug() << "getTranslation: " << text;
-    return QString("Переведенный текст на русском!");
+    QString res = runPythonScript(scriptPath, "translate", text);
+    return res;
 }
 
 QString Bridge::importPackages(const QString &jsonData) {
     qDebug() << "importPackages: " << jsonData;
-    return QString("[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"Терминология\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"Эмулятор терминала\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]");
+    QString res = runPythonScript(scriptPath, "import", jsonData);
+    return res;
 }
 
+QString Bridge::getSettings() {
+    qDebug() << "getSettings";
+    QString res = runPythonScript(scriptPath, "getSettings", "");
+    return res;
+}
 
+QString Bridge::runPythonScript(const QString &path, const QString &command, const QString &data) {
+    QProcess p;
+    QStringList params;
+
+    params << path + " " << "{\"command\":\""+ command +"\", \"args\":"+ data +"}";
+    p.start("python3", params);
+    p.waitForFinished(-1);
+
+    QString p_stdout = p.readAll();
+    return p_stdout;
+}
 
