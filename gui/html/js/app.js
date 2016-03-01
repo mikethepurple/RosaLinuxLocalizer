@@ -132,6 +132,44 @@ $(function() {
 		$('#workplace_container').html(rendered);
 		App.clearCurrentLocation();
 		$(e.target).parent().addClass("active");
+		
+		$(".jsSaveSettingsButton").click(function(e){
+			e.preventDefault();
+			$form = $(".settingsForm");
+			var br = [];
+			var $radios = $form.find("[type=radio]");
+			var f = true;
+			$.each($radios, function( index, value ) {
+				var obj = {name: $(value).attr("value"), active: ($(value).is(":checked")), first: f};
+				f = false;
+				br.push(obj);
+			});
+			
+			var vars = $form.find("#inputVariables").val().split(',');
+			var variablesList = [];
+			
+			var l = false;
+			$.each(vars, function( index, value ) {
+				if (index === (vars.length - 1)) {
+					l = true;
+				}
+				var variable = {name: value.trim(), last: l};
+				variablesList.push(variable);
+			});
+			
+			
+			var data = {
+				yandex_api_key: $form.find("#inputYandexApiKey").val(),
+				abf_projects_group:$form.find("#inputProjectGroup").val(),
+				abf_login:$form.find("#inputLogin").val(),
+				abf_password:$form.find("#inputPassword").val(),
+				branches: br,
+				variables: variablesList
+			};
+			console.log(data);
+			
+			Bridge.saveSettings(JSON.stringify(data));
+		});
 	});
 	
 	$(".jsOpenImportPackages").click(function(e){

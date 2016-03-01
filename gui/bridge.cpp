@@ -36,6 +36,12 @@ QString Bridge::getSettings() {
     return res;
 }
 
+QString Bridge::saveSettings(const QString &jsonData) {
+    qDebug() << "saveSettings: " << jsonData;
+    QString res = runPythonScript(scriptPath, "saveSettings", jsonData);
+    return res;
+}
+
 QString Bridge::runPythonScript(const QString &path, const QString &command, const QString &data) {
     QProcess p;
     QStringList params;
