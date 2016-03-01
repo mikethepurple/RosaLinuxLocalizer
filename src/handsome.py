@@ -8,23 +8,35 @@ from subprocess import call, Popen, PIPE
 from abf_interface import get_project_id
 
 
-def read_desktop(dir_name, file):
+def read_desktop(dir_name, file, dyn_names):
     """
-
-    :param dir_name:
-    :param file:
-    :return:
+    this creates list of dictionary structure with variable name and provider en and ru translations
+    :param dyn_names: list of names to read from .desktop file
+    :param dir_name: directory to read file from
+    :param file: RPM-root relative file name
+    :return: list of dict
     """
     va = []
     with open(dir_name + file) as d:
         va.extend(d.read().split("\n"))
-    return [one for one in va if ("Name=" in one or "Comment=" in one) and one[0] != '#']
+    t = [[a + "=", a + "[ru]="] for a in dyn_names]
+    k = [a for g in t for a in g]
+    mixed = [one for one in va for b in k if b in one and one[0] != '#']
+    en = [one.split("=") for one in mixed if "[ru]" not in one]
+    ru = [one.split("=") for one in mixed if "[ru]" in one]
+    enchanted_en = dict([(one[0], {"variable_name": one[0], "value": {"en": one[1]}}) for one in en])
+    for (name, value) in ru:
+        entry = enchanted_en[name[:-4]]
+        entry["value"]["ru"] = value
+        enchanted_en[name[:-4]] = entry
+    return [enchanted_en[a] for a in enchanted_en]
 
 
-def read_rpm_file(filename):
+def read_rpm_file(filename, dyn_names):
     """
     reads desktop file from supplied filename and yields list of desktop files here,
     for each desktop file yields list of strings to be localized
+    :param dyn_names: list of strings to extract from file
     :param filename: file to read desktop files from
     :return: [desktop_file_name, [pair, pair]]
     """
@@ -43,7 +55,7 @@ def read_rpm_file(filename):
     for (dir_path, dir_names, file_names) in walk(dir_name):
         f.extend([(dir_path + "/" + x)[len(dir_name):] for x in file_names if ".desktop" in x])
 
-    desktop_file_entries = [(line, read_desktop(dir_name, line)) for line in f]
+    desktop_file_entries = [{"path": line, "strings": read_desktop(dir_name, line, dyn_names)} for line in f]
 
     shutil.rmtree(dir_name)
 
@@ -62,12 +74,23 @@ def get_rpm_project_name(filename):
     return out.decode("UTF-8")[:-1]
 
 
-def full_project_info(group, filename):
+def full_project_info(group, filename, dyn_names):
     """
-
-    :param group:
-    :param filename:
-    :return:
+    This returns all information gathered from RPM file and quick ABF lookup.
+    :param group: ABF group to look project in
+    :param filename: path to provided RPM file
+    :return: complex dict structure
     """
     project_name = get_rpm_project_name(filename)
-    return filename, project_name, get_project_id(group, project_name), read_rpm_file(filename)
+    b, a = get_project_id(group, project_name)
+    file = read_rpm_file(filename, dyn_names)
+    status = 1
+    if len(file) == 0:
+        status = 3
+    elif any([len(var["value"]) < 2 for b in file for var in b["strings"]]):
+        status = 2
+    else:
+        status = 4
+
+    return {"status": status, "rpm": filename, "package_name": project_name, "git": a, "project_id": b,
+            "desktop_files": file}
