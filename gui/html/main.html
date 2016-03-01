@@ -139,7 +139,7 @@
 	</script>
 	
 	<script id="importPackagesTempl" type="x-tmpl-mustache">
-		<form class="form-horizontal">
+		<form class="form-horizontal importForm">
 		  <div class="form-group">
 			  <label for="importTypeLabel" class="col-sm-3 control-label">Тип импорта</label>
 			  <div class="radio col-sm-9">
@@ -166,16 +166,19 @@
 		  
 		  <div class="form-group" id="import_control_container">
 			<label for="importTypeLabel" class="col-sm-3 control-label file_chooser_label">Выберите файлы</label>
-			<div class="radio col-sm-9">
+			<!--div class="radio col-sm-9">
 				<label>
 					<input class="btn btn-default file_chooser_button" type="file" name="files" title="">
 				</label>
+			</div-->
+			<div class="col-sm-9">
+				<input type="text" class="form-control" name="repo" id="importControlLabel" placeholder="Введите путь до файла...">
 			</div>
 		  </div>
 		  
 		  <div class="form-group">
 			<div class="col-sm-offset-3 col-sm-9">
-			  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-save"></span> Импортировать</button>
+			  <button type="submit" class="btn btn-primary jsImportPackagesButton"><span class="glyphicon glyphicon-save"></span> Импортировать</button>
 			</div>
 		  </div>
 		</form>
@@ -183,10 +186,13 @@
 	
 	<script id="importControlFileTempl" type="x-tmpl-mustache">
 		<label for="importControlLabel" class="col-sm-3 control-label file_chooser_label">Выберите файл{{#multiple}}ы{{/multiple}}</label>
-		<div class="radio col-sm-9">
+		<!--div class="radio col-sm-9">
 			<label>
 				<input id="importControlLabel" class="btn btn-default file_chooser_button" type="file" name="files" title="">
 			</label>
+		</div-->
+		<div class="col-sm-9">
+			<input type="text" class="form-control" name="repo" id="importControlLabel" placeholder="Введите путь до файла...">
 		</div>
 	</script>
 	<script id="importControlRepoTempl" type="x-tmpl-mustache">

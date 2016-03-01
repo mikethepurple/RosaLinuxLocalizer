@@ -13,7 +13,7 @@ class Bridge : public Html5ApplicationViewer
         void addToJavaScript();
     public slots:
         QString getTranslation(const QString &text);
-        QString getPackages();
+        QString importPackages(const QString &jsonData);
 };
 
 #endif // BRIGE_H

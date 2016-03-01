@@ -1,46 +1,13 @@
 $(function() {
     console.log("application start");
 
-	$(".jsOpenSettings").click(function(e){
-		//App.settings = Bridge.getSettings();
-		var list = "{\"yandex_api_key\":\"webuy23dn289fydvbh8912e9vcydbu2e3rgvbudio2ecbudnvucbdowbu\",\"abf_projects_group\":\"import\",\"abf_login\":\"login\",\"abf_password\":\"password\",\"branches\":[{\"name\":\"import_cooker\",\"active\":false,\"first\":true},{\"name\":\"import_mandriva\",\"active\":false,\"first\":false},{\"name\":\"master\",\"active\":false,\"first\":false},{\"name\":\"red3\",\"active\":false,\"first\":false},{\"name\":\"rosa2012.1\",\"active\":false,\"first\":false},{\"name\":\"rosa2012lts\",\"active\":false,\"first\":false},{\"name\":\"rosa2014.1\",\"active\":true,\"first\":false}],\"variables\":[{\"name\":\"Name\",\"last\":false},{\"name\":\"Comment\",\"last\":true}]}";	
-		App.settings = JSON.parse(list);
-		var template = $('#settingsTempl').html();
-		Mustache.parse(template); 
-		var rendered = Mustache.render(template, App.settings);
-		$('#workplace_container').html(rendered);
-		App.clearCurrentLocation();
-		$(e.target).parent().addClass("active");
-	});
-	
-	$(".jsOpenImportPackages").click(function(e){
-		var template = $('#importPackagesTempl').html();
-		Mustache.parse(template); 
-		var rendered = Mustache.render(template, App.settings);
-		$('#workplace_container').html(rendered);
-		App.clearCurrentLocation();
-		$(e.target).parent().addClass("active");
-		
-		$('input[type=radio][name=importType]').change(function() {
-			if (this.value == 'files' || this.value == 'custom') {
-				var template = $('#importControlFileTempl').html();
-			}
-			else if (this.value == 'repo') {
-				var template = $('#importControlRepoTempl').html();
-			}
-			Mustache.parse(template); 
-			var rendered = Mustache.render(template, {"multiple":(this.value == 'files')});
-			$('#import_control_container').html(rendered);
-		});
-	});
-
 	App = {
 		packages: [],
 		settings: {},
 		
 		loadPackages: function () {
-			//var list = Bridge.getPackages();
-			var list = "[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"Терминология\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"Эмулятор терминала\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]";
+			var list = Bridge.getPackages();
+			//var list = "[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"Терминология\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"Эмулятор терминала\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]";
 			this.packages = JSON.parse(list);
 			console.log(this.packages.length + " packages loaded:\n" + JSON.stringify(this.packages));
 			
@@ -141,5 +108,68 @@ $(function() {
 		}
 	};
 	
-	App.loadPackages();
+	//App.loadPackages();
+	
+	$(".jsOpenSettings").click(function(e){
+		//App.settings = Bridge.getSettings();
+		var list = "{\"yandex_api_key\":\"webuy23dn289fydvbh8912e9vcydbu2e3rgvbudio2ecbudnvucbdowbu\",\"abf_projects_group\":\"import\",\"abf_login\":\"login\",\"abf_password\":\"password\",\"branches\":[{\"name\":\"import_cooker\",\"active\":false,\"first\":true},{\"name\":\"import_mandriva\",\"active\":false,\"first\":false},{\"name\":\"master\",\"active\":false,\"first\":false},{\"name\":\"red3\",\"active\":false,\"first\":false},{\"name\":\"rosa2012.1\",\"active\":false,\"first\":false},{\"name\":\"rosa2012lts\",\"active\":false,\"first\":false},{\"name\":\"rosa2014.1\",\"active\":true,\"first\":false}],\"variables\":[{\"name\":\"Name\",\"last\":false},{\"name\":\"Comment\",\"last\":true}]}";	
+		App.settings = JSON.parse(list);
+		var template = $('#settingsTempl').html();
+		Mustache.parse(template); 
+		var rendered = Mustache.render(template, App.settings);
+		$('#workplace_container').html(rendered);
+		App.clearCurrentLocation();
+		$(e.target).parent().addClass("active");
+	});
+	
+	$(".jsOpenImportPackages").click(function(e){
+		var template = $('#importPackagesTempl').html();
+		Mustache.parse(template); 
+		var rendered = Mustache.render(template, App.settings);
+		$('#workplace_container').html(rendered);
+		App.clearCurrentLocation();
+		$(e.target).parent().addClass("active");
+		
+		$('input[type=radio][name=importType]').change(function() {
+			if (this.value == 'files' || this.value == 'custom') {
+				var template = $('#importControlFileTempl').html();
+			}
+			else if (this.value == 'repo') {
+				var template = $('#importControlRepoTempl').html();
+			}
+			Mustache.parse(template); 
+			var rendered = Mustache.render(template, {"multiple":(this.value == 'files')});
+			$('#import_control_container').html(rendered);
+		});
+		
+		$(".jsImportPackagesButton").click(function(e){
+			e.preventDefault();
+			var $form = $(".importForm");
+			var data = {
+				type: $form.find(":checked").val(),
+				values: [
+					$form.find("#importControlLabel").val()
+				]
+			};
+			var list = Bridge.importPackages(JSON.stringify(data));
+			App.packages = JSON.parse(list);
+			App.reloadPackagesList();
+		});
+	});
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
