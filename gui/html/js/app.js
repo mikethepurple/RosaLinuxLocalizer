@@ -2,6 +2,7 @@ $(function() {
     console.log("application start");
 
 	App = {
+		useStubs: false,
 		packages: [],
 		settings: {},
 		
@@ -79,14 +80,22 @@ $(function() {
                                 "Продолжить": {
                                         className: "btn-warning",
                                         callback: function() {
-                                            var translatedText = /*"Переведенный текст."*/Bridge.getTranslation(textEn);
+											if (!self.useStubs) {
+												var translatedText = Bridge.getTranslation(textEn);
+											} else {
+												var translatedText = "Переведенный текст.";
+											}
                                             targetField.val(translatedText);
                                         }
                                 },
                         }
                         });
 				} else {
-					var translatedText = /*"Переведенный текст."*/Bridge.getTranslation(textEn);
+					if (!self.useStubs) {
+						var translatedText = Bridge.getTranslation(textEn);
+					} else {
+						var translatedText = "Переведенный текст.";
+					}
                     targetField.val(translatedText);
 				}
 			});
@@ -110,11 +119,12 @@ $(function() {
 		}
 	};
 	
-	//App.loadPackages();
-	
 	$(".jsOpenSettings").click(function(e){
-		//App.settings = Bridge.getSettings();
-		var list = "{\"yandex_api_key\":\"webuy23dn289fydvbh8912e9vcydbu2e3rgvbudio2ecbudnvucbdowbu\",\"abf_projects_group\":\"import\",\"abf_login\":\"login\",\"abf_password\":\"password\",\"branches\":[{\"name\":\"import_cooker\",\"active\":false,\"first\":true},{\"name\":\"import_mandriva\",\"active\":false,\"first\":false},{\"name\":\"master\",\"active\":false,\"first\":false},{\"name\":\"red3\",\"active\":false,\"first\":false},{\"name\":\"rosa2012.1\",\"active\":false,\"first\":false},{\"name\":\"rosa2012lts\",\"active\":false,\"first\":false},{\"name\":\"rosa2014.1\",\"active\":true,\"first\":false}],\"variables\":[{\"name\":\"Name\",\"last\":false},{\"name\":\"Comment\",\"last\":true}]}";	
+		if (!App.useStubs) {
+			var list = Bridge.getSettings();
+		} else {
+			var list = "{\"yandex_api_key\":\"webuy23dn289fydvbh8912e9vcydbu2e3rgvbudio2ecbudnvucbdowbu\",\"abf_projects_group\":\"import\",\"abf_login\":\"login\",\"abf_password\":\"password\",\"branches\":[{\"name\":\"import_cooker\",\"active\":false,\"first\":true},{\"name\":\"import_mandriva\",\"active\":false,\"first\":false},{\"name\":\"master\",\"active\":false,\"first\":false},{\"name\":\"red3\",\"active\":false,\"first\":false},{\"name\":\"rosa2012.1\",\"active\":false,\"first\":false},{\"name\":\"rosa2012lts\",\"active\":false,\"first\":false},{\"name\":\"rosa2014.1\",\"active\":true,\"first\":false}],\"variables\":[{\"name\":\"Name\",\"last\":false},{\"name\":\"Comment\",\"last\":true}]}";	
+		}
 		App.settings = JSON.parse(list);
 		var template = $('#settingsTempl').html();
 		Mustache.parse(template); 
@@ -153,7 +163,11 @@ $(function() {
 					$form.find("#importControlLabel").val()
 				]
 			};
-			var list = Bridge.importPackages(JSON.stringify(data));
+			if (!App.useStubs) {
+				var list = Bridge.importPackages(JSON.stringify(data));
+			} else {
+				var list = "[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"Терминология\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"Эмулятор терминала\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]";	
+			}
 			App.packages = JSON.parse(list);
 			console.log(App.packages.length + " packages loaded:\n" + JSON.stringify(App.packages));
 			App.reloadPackagesList();

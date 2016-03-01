@@ -11,9 +11,11 @@ class Bridge : public Html5ApplicationViewer
         explicit Bridge(QWidget *parent=0);
     private slots:
         void addToJavaScript();
+        QString runPythonScript(const QString &path, const QString &command, const QString &data);
     public slots:
         QString getTranslation(const QString &text);
         QString importPackages(const QString &jsonData);
+        QString getSettings();
 };
 
 #endif // BRIGE_H
