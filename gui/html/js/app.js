@@ -5,48 +5,50 @@ $(function() {
 		packages: [],
 		settings: {},
 		
-		loadPackages: function () {
+		init: function() {
+			this.reloadPackagesList();
+		},
+		
+		/*loadPackages: function () {
 			var list = Bridge.getPackages();
 			//var list = "[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"Терминология\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"Эмулятор терминала\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]";
 			this.packages = JSON.parse(list);
 			console.log(this.packages.length + " packages loaded:\n" + JSON.stringify(this.packages));
 			
 			this.reloadPackagesList();
-		},
+		},*/
 		
 		reloadPackagesList: function() {
-			if (this.packages) {
-				var template = $('#packageListItemTempl').html();
-				Mustache.parse(template); 
-				var obj = {
-					"packages": this.packages, 
-					"statusText": function(status) {
-						switch (this.status) {
-							case "2": return "Готов к локализации";
-							case "3": return "Не найдены строки для локализации";
-							case "4": return "Локализация добавлена";
-							default: return "Статус неизвестен";
-						}
+			var template = $('#packageListItemTempl').html();
+			Mustache.parse(template); 
+			var obj = {
+				"packages": this.packages, 
+				"statusText": function(status) {
+					switch (this.status) {
+						case "2": return "Готов к локализации";
+						case "3": return "Не найдены строки для локализации";
+						case "4": return "Локализация добавлена";
+						default: return "Статус неизвестен";
 					}
 				}
-				var rendered = Mustache.render(template, obj);
-				$('#packages_list_container').html(rendered);
-				
-				var self = this;
-				$(".jsPackagesListItem").click(function(e) {
-					if ($(e.target).data("id")) {
-						var id = $(e.target).data("id");
-						$(".jsPackagesListItem").removeClass("active");
-						self.clearCurrentLocation();
-						$(e.target).addClass("active");
-					} else {
-						var id = $(e.target.parentElement).data("id");
-						self.clearCurrentLocation();
-						$(e.target.parentElement).addClass("active");
-					}
-					self.displayPackage(id);
-				});
 			}
+			var rendered = Mustache.render(template, obj);
+			$('#packages_list_container').html(rendered);
+			
+			var self = this;
+			$(".jsPackagesListItem").click(function(e) {
+				if ($(e.target).data("id")) {
+					var id = $(e.target).data("id");
+					$(".jsPackagesListItem").removeClass("active");
+					self.clearCurrentLocation();
+					$(e.target).addClass("active");
+				} else {
+					var id = $(e.target.parentElement).data("id");
+					self.clearCurrentLocation();
+					$(e.target.parentElement).addClass("active");
+				}
+				self.displayPackage(id);
+			});
 		},
 		
 		displayPackage: function(projectId) {
@@ -153,9 +155,13 @@ $(function() {
 			};
 			var list = Bridge.importPackages(JSON.stringify(data));
 			App.packages = JSON.parse(list);
+			console.log(App.packages.length + " packages loaded:\n" + JSON.stringify(App.packages));
 			App.reloadPackagesList();
 		});
 	});
+	
+	App.init();
+	
 });
 
 
