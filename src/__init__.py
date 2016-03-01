@@ -22,13 +22,14 @@ project_info = [full_project_info(project_group, f, ["Name", "Comment"]) for f i
 print(json.dumps(project_info))
 translated_files = ""
 
-for f in project_info[0]["desktop_files"]:
-    print(str(f["path"]))
-    translated_files = translated_files + f["path"] + "\n"
-    for i in f["strings"]:
-        translated = str(
-            i["variable_name"] + "[translated_ru]=" + yandex_translate(yandex_api_key, "en-ru", i["value"]["en"]))
-        translated_files = translated_files + translated + "\n"
-        print(translated)
+for one in project_info:
+    for f in one["desktop_files"]:
+        print(str(f["path"]))
+        translated_files = translated_files + f["path"] + "\n"
+        for i in f["strings"]:
+            translated = str(
+                i["variable_name"] + "[translated_ru]=" + yandex_translate(yandex_api_key, "en-ru", i["value"]["en"]))
+            translated_files = translated_files + translated + "\n"
+            print(translated)
 
 commit_patch(project_info[0]["git"], project_info[0]["package_name"], translated_files)

@@ -4,6 +4,13 @@ from subprocess import call, PIPE
 
 
 def commit_patch(repo_path, package_name, patch_content):
+    """
+    This is for saving patch file, adding it to git and pushing back to ABF.
+    :param repo_path: git URL to clone from (ssh, https)
+    :param package_name: package name to open spec file from
+    :param patch_content: text to write to patch file
+    :return: nothing
+    """
     random_str = uuid.uuid4().hex.capitalize()
     print(random_str)
     call("cd /tmp/ && git clone " + repo_path + " " + random_str, shell=True, stdout=PIPE, stderr=PIPE)

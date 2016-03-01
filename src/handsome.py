@@ -10,19 +10,20 @@ from abf_interface import get_project_id
 
 def read_desktop(dir_name, file, dyn_names):
     """
-    :param dyn_names:
-    :param dir_name:
-    :param file:
-    :return:
+    this creates list of dictionary structure with variable name and provider en and ru translations
+    :param dyn_names: list of names to read from .desktop file
+    :param dir_name: directory to read file from
+    :param file: RPM-root relative file name
+    :return: list of dict
     """
     va = []
     with open(dir_name + file) as d:
         va.extend(d.read().split("\n"))
     t = [[a + "=", a + "[ru]="] for a in dyn_names]
     k = [a for g in t for a in g]
-    all = [one for one in va for b in k if b in one and one[0] != '#']
-    en = [one.split("=") for one in all if "[ru]" not in one]
-    ru = [one.split("=") for one in all if "[ru]" in one]
+    mixed = [one for one in va for b in k if b in one and one[0] != '#']
+    en = [one.split("=") for one in mixed if "[ru]" not in one]
+    ru = [one.split("=") for one in mixed if "[ru]" in one]
     enchanted_en = dict([(one[0], {"variable_name": one[0], "value": {"en": one[1]}}) for one in en])
     for (name, value) in ru:
         entry = enchanted_en[name[:-4]]
@@ -75,9 +76,10 @@ def get_rpm_project_name(filename):
 
 def full_project_info(group, filename, dyn_names):
     """
-    :param group:
-    :param filename:
-    :return:
+    This returns all information gathered from RPM file and quick ABF lookup.
+    :param group: ABF group to look project in
+    :param filename: path to provided RPM file
+    :return: complex dict structure
     """
     project_name = get_rpm_project_name(filename)
     b, a = get_project_id(group, project_name)
