@@ -99,6 +99,42 @@ $(function() {
                     targetField.val(translatedText);
 				}
 			});
+			
+			$(".jsSaveTranslationsButton").click(function(e){
+				e.preventDefault();
+				$form = $(".translationsForm");
+				
+				$desktopFiles = $(".translationsForm .desktopFile");
+				var files = [];
+				
+				$.each($desktopFiles, function( index, value ) {
+					var obj = {path: $(value).find(".desktopFilePath").html(), strings: []};
+					var strs = $(value).find(".stringForTranslate");
+					var stringList = [];
+					$.each(strs, function( index, value ) {
+						var str = {
+							variable_name: $(value).data("varname"),
+							value: {
+								en: $(value).find("#stringEn").html(),
+								ru: $(value).find("#stringRu").val()
+							}
+						};
+						stringList.push(str);
+					});
+					
+					obj.strings = stringList;
+					
+					files.push(obj);
+				});
+								
+				var data = {
+					git: $(".gitRepository").html(),
+					desktop_files: files
+				};
+				console.log(data);
+				
+				Bridge.saveTranslations(JSON.stringify(data));
+			});
 		},
 		
 		getPackageByProjectId: function(projectId) {

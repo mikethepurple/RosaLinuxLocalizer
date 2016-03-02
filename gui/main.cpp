@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     Bridge mainView;
 
     mainView.setOrientation(Html5ApplicationViewer::ScreenOrientationAuto);
-    mainView.setMinimumHeight(768);
+    mainView.setMinimumHeight(480);
     mainView.setMinimumWidth(1024);
     mainView.setWindowTitle("Hansome Localizer v1.0");
 

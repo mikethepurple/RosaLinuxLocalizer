@@ -51,40 +51,44 @@
 	<script id="packageTempl" type="x-tmpl-mustache">
 		<table class="table table-borderless">
 			<tr>
-				<td class="text-right"><b>Имя rpm-файла:</b></td>
-				<td>{{rpm}}</td>
+				<td class="col-sm-6 text-right"><b>Имя rpm-файла:</b></td>
+				<td class="col-sm-6">{{rpm}}</td>
 			</tr>
 			<tr>
 				<td class="text-right"><b>Адрес репозитория:</b></td>
-				<td>{{git}}</td>
+				<td class="gitRepository">{{git}}</td>
 			</tr>
 		</table>
 	
-		<form>
+		<form class="translationsForm">
 			{{#desktop_files}}
-				<hr>
-				<table class="table table-borderless">
-					<tr>
-						<td class="text-right"><b>Расположение desktop-файла:</b></td>
-						<td>{{path}}</td>
-					</tr>
-				</table>
-				{{#strings}}
-					<div class="form-group">
-						<label for="shortDesctiptionRu">{{variable_name}} (en):</label>
-						<div class="well well-sm" rows="3" id="shortDesctiptionEn">{{value.en}}</div>
-					</div>
-					<div class="form-group">
-						<label for="shortDesctiptionRu">
-							<div class="">{{variable_name}} (ru):</div>
-						</label>
-						<div class="btn btn-link pull-right jsMachineTranslation">Машинный перевод</div>
-						<textarea class="form-control" rows="3" id="shortDesctiptionRu">{{value.ru}}</textarea>
-					</div>
-				{{/strings}}
+				<div class="desktopFile">
+					<hr>
+					<table class="table table-borderless">
+						<tr>
+							<td class="col-sm-6 text-right"><b>Расположение desktop-файла:</b></td>
+							<td class="col-sm-6 desktopFilePath">{{path}}</td>
+						</tr>
+					</table>
+					{{#strings}}
+						<div class="stringForTranslate" data-varName="{{variable_name}}">
+							<div class="form-group">
+								<label for="stringEn">{{variable_name}} (en):</label>
+								<div class="well well-sm" rows="3" id="stringEn">{{value.en}}</div>
+							</div>
+							<div class="form-group">
+								<label for="stringRu">
+									<div class="">{{variable_name}} (ru):</div>
+								</label>
+								<div class="btn btn-link pull-right jsMachineTranslation">Машинный перевод</div>
+								<textarea class="form-control" rows="3" id="stringRu">{{value.ru}}</textarea>
+							</div>
+						</div>
+					{{/strings}}
+				</div>
 		    {{/desktop_files}}
 		  <!--button type="submit" class="btn btn-warning cancel_button"><span class="glyphicon glyphicon-remove"></span> Отменить изменения</button-->
-		  <button type="submit" class="btn btn-primary pull-right save_button"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить (коммит)</button>
+		  <button type="submit" class="btn btn-primary pull-right jsSaveTranslationsButton"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить (коммит)</button>
 		</form>
     </script>
 	

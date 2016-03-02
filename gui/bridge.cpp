@@ -32,7 +32,7 @@ QString Bridge::importPackages(const QString &jsonData) {
 
 QString Bridge::getSettings() {
     qDebug() << "getSettings";
-    QString res = runPythonScript(scriptPath, "getSettings", "");
+    QString res = runPythonScript(scriptPath, "getSettings", "\"\"");
     return res;
 }
 
@@ -42,11 +42,18 @@ QString Bridge::saveSettings(const QString &jsonData) {
     return res;
 }
 
+QString Bridge::saveTranslations(const QString &jsonData) {
+    qDebug() << "saveTranslations: " << jsonData;
+    QString res = runPythonScript(scriptPath, "saveTranslations", jsonData);
+    return res;
+}
+
 QString Bridge::runPythonScript(const QString &path, const QString &command, const QString &data) {
     QProcess p;
     QStringList params;
 
     params << path + " " << "{\"command\":\""+ command +"\", \"args\":"+ data +"}";
+    qDebug() << "params: " << params;
     p.start("python3", params);
     p.waitForFinished(-1);
 
