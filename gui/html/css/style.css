@@ -42,5 +42,9 @@ body {
 }
 
 .file_chooser_button {
-	margin-left: -20px;
+	max-width: 280px;
+}
+
+.not_imported_packages {
+	margin-top: 20px;
 }

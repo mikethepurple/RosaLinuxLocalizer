@@ -45,7 +45,7 @@
 				<p class="list-group-item-text text-right"><span class="label label-primary">{{statusText}}</span></p>
 			</a>
 		{{/packages}}
-		{{^packages}}<p class="text-center"><strong>Пакеты не импортированы</strong></p>{{/packages}}
+		{{^packages}}<p class="text-center not_imported_packages"><strong>Пакеты не импортированы</strong></p>{{/packages}}
     </script>
 	
 	<script id="packageTempl" type="x-tmpl-mustache">
@@ -151,11 +151,11 @@
 					<input type="radio" id="files" name="importType" value="files" checked>один или несколько rpm-файлов
 				</label>
 			  </div>
-			  <!--div class="radio col-sm-9 col-sm-offset-3">
+			  <div class="radio col-sm-9 col-sm-offset-3">
 				<label>
 					<input type="radio" id="dir" name="importType" value="dir">все rpm-файлы из директории
 				</label>
-			  </div-->
+			  </div>
 			  <div class="radio col-sm-9 col-sm-offset-3">
 				<label>
 					<input type="radio" id="repo" name="importType" value="repo">все rpm-файлы из удаленного репозитория
@@ -170,13 +170,8 @@
 		  
 		  <div class="form-group" id="import_control_container">
 			<label for="importTypeLabel" class="col-sm-3 control-label file_chooser_label">Выберите файлы</label>
-			<!--div class="radio col-sm-9">
-				<label>
-					<input class="btn btn-default file_chooser_button" type="file" name="files" title="">
-				</label>
-			</div-->
-			<div class="col-sm-9">
-				<input type="text" class="form-control" name="repo" id="importControlLabel" placeholder="Введите путь до файла...">
+			<div class="radio col-sm-9">
+				<button class="btn btn-default file_chooser_button jsOpenFilesButton" id="importControlLabel"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;<span class="jsOpenFilesButtonText">Обзор...</span></button>
 			</div>
 		  </div>
 		  
@@ -189,14 +184,16 @@
 	</script>
 	
 	<script id="importControlFileTempl" type="x-tmpl-mustache">
-		<label for="importControlLabel" class="col-sm-3 control-label file_chooser_label">Выберите файл{{#multiple}}ы{{/multiple}}</label>
-		<!--div class="radio col-sm-9">
-			<label>
-				<input id="importControlLabel" class="btn btn-default file_chooser_button" type="file" name="files" title="">
-			</label>
-		</div-->
-		<div class="col-sm-9">
-			<input type="text" class="form-control" name="repo" id="importControlLabel" placeholder="Введите путь до файла...">
+		<label for="importControlLabel" class="col-sm-3 control-label file_chooser_label">
+			{{#files}}
+				Выберите файл{{#multiple}}ы{{/multiple}}
+			{{/files}}
+			{{^files}}
+				Выберите директорию
+			{{/files}}
+		</label>
+		<div class="radio col-sm-9">
+			<button class="btn btn-default file_chooser_button jsOpenFilesButton" id="importControlLabel"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;<span class="jsOpenFilesButtonText">Обзор...</span></button>
 		</div>
 	</script>
 	<script id="importControlRepoTempl" type="x-tmpl-mustache">

@@ -18,6 +18,8 @@ class Bridge : public Html5ApplicationViewer
         QString getSettings();
         QString saveSettings(const QString &jsonData);
         QString saveTranslations(const QString &jsonData);
+
+        QStringList openFiles(int mode);
 };
 
 #endif // BRIGE_H
