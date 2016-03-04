@@ -32,9 +32,9 @@ elif input_user["command"] == "import":
     data = input_user["args"]
     files = []
     if data["type"] == "files":
-        files = filter_input(data["values"])
+        files = filter_input(data["value"])
     elif data["type"] == "custom":
-        files = from_file_with_list(data["values"])
+        files = from_file_with_list(data["value"])
     project_info = [full_project_info(project_group, f, ["Name", "Comment"]) for f in files]
     print(json.dumps(project_info))
     # commit_patch(project_info[0]["git"], project_info[0]["package_name"], translated_files)

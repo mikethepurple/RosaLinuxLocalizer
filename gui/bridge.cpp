@@ -7,7 +7,7 @@
 
 Bridge::Bridge(QWidget *parent) : Html5ApplicationViewer(parent) {
     QObject::connect(webView()->page()->mainFrame(),
-            SIGNAL(javaScriptWindowObjectCleared()), SLOT(addToJavaScript()));
+                     SIGNAL(javaScriptWindowObjectCleared()), SLOT(addToJavaScript()));
 }
 
 void Bridge::addToJavaScript() {
@@ -32,7 +32,7 @@ QString Bridge::importPackages(const QString &jsonData) {
 
 QString Bridge::getSettings() {
     qDebug() << "getSettings";
-    QString res = runPythonScript(scriptPath, "getSettings", "");
+    QString res = runPythonScript(scriptPath, "getSettings", "\"\"");
     return res;
 }
 
@@ -46,7 +46,7 @@ QString Bridge::runPythonScript(const QString &path, const QString &command, con
     QProcess p;
     QStringList params;
 
-    params << path + " " << "{\"command\":\""+ command +"\", \"args\":"+ data +"}";
+    params << path + " " << " {\"command\":\""+ command +"\", \"args\":"+ data +"}";
     p.start("python3", params);
     p.waitForFinished(-1);
 

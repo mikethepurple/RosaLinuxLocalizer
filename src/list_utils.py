@@ -9,7 +9,7 @@ def filter_input(file_names):
     :param file_names: slash-n-separated list of file names
     :return: list of file names [string]
     """
-    return [x for x in file_names if ".rpm" in x]
+    return [x for x in file_names.split("\n") if ".rpm" in x]
 
 
 def in_dir(path):
