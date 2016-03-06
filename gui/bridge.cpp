@@ -10,7 +10,7 @@ bool useStubs = false;
 
 Bridge::Bridge(QWidget *parent) : Html5ApplicationViewer(parent) {
     QObject::connect(webView()->page()->mainFrame(),
-            SIGNAL(javaScriptWindowObjectCleared()), SLOT(addToJavaScript()));
+                     SIGNAL(javaScriptWindowObjectCleared()), SLOT(addToJavaScript()));
 }
 
 void Bridge::addToJavaScript() {
