@@ -45,46 +45,50 @@
 				<p class="list-group-item-text text-right"><span class="label label-primary">{{statusText}}</span></p>
 			</a>
 		{{/packages}}
-		{{^packages}}<p class="text-center"><strong>Пакеты не импортированы</strong></p>{{/packages}}
+		{{^packages}}<p class="text-center not_imported_packages"><strong>Пакеты не импортированы</strong></p>{{/packages}}
     </script>
 	
 	<script id="packageTempl" type="x-tmpl-mustache">
 		<table class="table table-borderless">
 			<tr>
-				<td class="text-right"><b>Имя rpm-файла:</b></td>
-				<td>{{rpm}}</td>
+				<td class="col-sm-6 text-right"><b>Имя rpm-файла:</b></td>
+				<td class="col-sm-6">{{rpm}}</td>
 			</tr>
 			<tr>
 				<td class="text-right"><b>Адрес репозитория:</b></td>
-				<td>{{git}}</td>
+				<td class="gitRepository">{{git}}</td>
 			</tr>
 		</table>
 	
-		<form>
+		<form class="translationsForm">
 			{{#desktop_files}}
-				<hr>
-				<table class="table table-borderless">
-					<tr>
-						<td class="text-right"><b>Расположение desktop-файла:</b></td>
-						<td>{{path}}</td>
-					</tr>
-				</table>
-				{{#strings}}
-					<div class="form-group">
-						<label for="shortDesctiptionRu">{{variable_name}} (en):</label>
-						<div class="well well-sm" rows="3" id="shortDesctiptionEn">{{value.en}}</div>
-					</div>
-					<div class="form-group">
-						<label for="shortDesctiptionRu">
-							<div class="">{{variable_name}} (ru):</div>
-						</label>
-						<div class="btn btn-link pull-right jsMachineTranslation">Машинный перевод</div>
-						<textarea class="form-control" rows="3" id="shortDesctiptionRu">{{value.ru}}</textarea>
-					</div>
-				{{/strings}}
+				<div class="desktopFile">
+					<hr>
+					<table class="table table-borderless">
+						<tr>
+							<td class="col-sm-6 text-right"><b>Расположение desktop-файла:</b></td>
+							<td class="col-sm-6 desktopFilePath">{{path}}</td>
+						</tr>
+					</table>
+					{{#strings}}
+						<div class="stringForTranslate" data-varName="{{variable_name}}">
+							<div class="form-group">
+								<label for="stringEn">{{variable_name}} (en):</label>
+								<div class="well well-sm" rows="3" id="stringEn">{{value.en}}</div>
+							</div>
+							<div class="form-group">
+								<label for="stringRu">
+									<div class="">{{variable_name}} (ru):</div>
+								</label>
+								<div class="btn btn-link pull-right jsMachineTranslation">Машинный перевод</div>
+								<textarea class="form-control" rows="3" id="stringRu">{{value.ru}}</textarea>
+							</div>
+						</div>
+					{{/strings}}
+				</div>
 		    {{/desktop_files}}
 		  <!--button type="submit" class="btn btn-warning cancel_button"><span class="glyphicon glyphicon-remove"></span> Отменить изменения</button-->
-		  <button type="submit" class="btn btn-primary pull-right save_button"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить (коммит)</button>
+		  <button type="submit" class="btn btn-primary pull-right jsSaveTranslationsButton"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить (коммит)</button>
 		</form>
     </script>
 	
@@ -147,11 +151,11 @@
 					<input type="radio" id="files" name="importType" value="files" checked>один или несколько rpm-файлов
 				</label>
 			  </div>
-			  <!--div class="radio col-sm-9 col-sm-offset-3">
+			  <div class="radio col-sm-9 col-sm-offset-3">
 				<label>
 					<input type="radio" id="dir" name="importType" value="dir">все rpm-файлы из директории
 				</label>
-			  </div-->
+			  </div>
 			  <div class="radio col-sm-9 col-sm-offset-3">
 				<label>
 					<input type="radio" id="repo" name="importType" value="repo">все rpm-файлы из удаленного репозитория
@@ -166,13 +170,8 @@
 		  
 		  <div class="form-group" id="import_control_container">
 			<label for="importTypeLabel" class="col-sm-3 control-label file_chooser_label">Выберите файлы</label>
-			<!--div class="radio col-sm-9">
-				<label>
-					<input class="btn btn-default file_chooser_button" type="file" name="files" title="">
-				</label>
-			</div-->
-			<div class="col-sm-9">
-				<input type="text" class="form-control" name="repo" id="importControlLabel" placeholder="Введите путь до файла...">
+			<div class="radio col-sm-9">
+				<button class="btn btn-default file_chooser_button jsOpenFilesButton" id="importControlLabel"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;<span class="jsOpenFilesButtonText">Обзор...</span></button>
 			</div>
 		  </div>
 		  
@@ -185,14 +184,16 @@
 	</script>
 	
 	<script id="importControlFileTempl" type="x-tmpl-mustache">
-		<label for="importControlLabel" class="col-sm-3 control-label file_chooser_label">Выберите файл{{#multiple}}ы{{/multiple}}</label>
-		<!--div class="radio col-sm-9">
-			<label>
-				<input id="importControlLabel" class="btn btn-default file_chooser_button" type="file" name="files" title="">
-			</label>
-		</div-->
-		<div class="col-sm-9">
-			<input type="text" class="form-control" name="repo" id="importControlLabel" placeholder="Введите путь до файла...">
+		<label for="importControlLabel" class="col-sm-3 control-label file_chooser_label">
+			{{#files}}
+				Выберите файл{{#multiple}}ы{{/multiple}}
+			{{/files}}
+			{{^files}}
+				Выберите директорию
+			{{/files}}
+		</label>
+		<div class="radio col-sm-9">
+			<button class="btn btn-default file_chooser_button jsOpenFilesButton" id="importControlLabel"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;<span class="jsOpenFilesButtonText">Обзор...</span></button>
 		</div>
 	</script>
 	<script id="importControlRepoTempl" type="x-tmpl-mustache">

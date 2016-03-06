@@ -10,15 +10,6 @@ $(function() {
 			this.reloadPackagesList();
 		},
 		
-		/*loadPackages: function () {
-			var list = Bridge.getPackages();
-			//var list = "[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"Терминология\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"Эмулятор терминала\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]";
-			this.packages = JSON.parse(list);
-			console.log(this.packages.length + " packages loaded:\n" + JSON.stringify(this.packages));
-			
-			this.reloadPackagesList();
-		},*/
-		
 		reloadPackagesList: function() {
 			var template = $('#packageListItemTempl').html();
 			Mustache.parse(template); 
@@ -99,6 +90,42 @@ $(function() {
                     targetField.val(translatedText);
 				}
 			});
+			
+			$(".jsSaveTranslationsButton").click(function(e){
+				e.preventDefault();
+				$form = $(".translationsForm");
+				
+				$desktopFiles = $(".translationsForm .desktopFile");
+				var files = [];
+				
+				$.each($desktopFiles, function( index, value ) {
+					var obj = {path: $(value).find(".desktopFilePath").html(), strings: []};
+					var strs = $(value).find(".stringForTranslate");
+					var stringList = [];
+					$.each(strs, function( index, value ) {
+						var str = {
+							variable_name: $(value).data("varname"),
+							value: {
+								en: $(value).find("#stringEn").html(),
+								ru: $(value).find("#stringRu").val()
+							}
+						};
+						stringList.push(str);
+					});
+					
+					obj.strings = stringList;
+					
+					files.push(obj);
+				});
+								
+				var data = {
+					git: $(".gitRepository").html(),
+					desktop_files: files
+				};
+				console.log(data);
+				
+				Bridge.saveTranslations(JSON.stringify(data));
+			});
 		},
 		
 		getPackageByProjectId: function(projectId) {
@@ -172,6 +199,9 @@ $(function() {
 		});
 	});
 	
+	
+	var importSelectedFiles = undefined;
+	
 	$(".jsOpenImportPackages").click(function(e){
 		var template = $('#importPackagesTempl').html();
 		Mustache.parse(template); 
@@ -180,27 +210,47 @@ $(function() {
 		App.clearCurrentLocation();
 		$(e.target).parent().addClass("active");
 		
+		$('.jsOpenFilesButton').click(function(e){
+			e.preventDefault();
+			importSelectedFiles = Bridge.openFiles(1);//изначаль выбран mode = 1
+			console.log(importSelectedFiles);
+		});
+		
 		$('input[type=radio][name=importType]').change(function() {
-			if (this.value == 'files' || this.value == 'custom') {
-				var template = $('#importControlFileTempl').html();
-			}
-			else if (this.value == 'repo') {
+			var mode = 0;
+			if (this.value == 'repo') {
 				var template = $('#importControlRepoTempl').html();
 			}
+			else if (this.value == 'files' || this.value == 'dir' || this.value == 'custom') {
+				var template = $('#importControlFileTempl').html();
+				
+				if (this.value === 'files') { mode = 1; }
+				if (this.value === 'dir') { mode = 2; }
+				if (this.value === 'custom') { mode = 3; }
+			}
 			Mustache.parse(template); 
-			var rendered = Mustache.render(template, {"multiple":(this.value == 'files')});
+			var rendered = Mustache.render(template, {"files": !(this.value == 'dir'), "multiple":(this.value == 'files')});
 			$('#import_control_container').html(rendered);
+			
+			if (this.value == 'files' || this.value == 'dir' || this.value == 'custom') {
+				$('.jsOpenFilesButton').click(function(e){
+					e.preventDefault();
+					importSelectedFiles = Bridge.openFiles(mode);
+					console.log(importSelectedFiles);
+				});
+			}
+			
 		});
+		
 		
 		$(".jsImportPackagesButton").click(function(e){
 			e.preventDefault();
 			var $form = $(".importForm");
 			var data = {
 				type: $form.find(":checked").val(),
-				values: [
-					$form.find("#importControlLabel").val()
-				]
+				values: importSelectedFiles || [ $form.find("#importControlLabel").val() ]
 			};
+			importSelectedFiles = undefined;
 			if (!App.useStubs) {
 				var list = Bridge.importPackages(JSON.stringify(data));
 			} else {
