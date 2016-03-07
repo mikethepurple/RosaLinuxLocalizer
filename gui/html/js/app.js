@@ -212,7 +212,7 @@ $(function() {
 		
 		$('.jsOpenFilesButton').click(function(e){
 			e.preventDefault();
-			importSelectedFiles = Bridge.openFiles(1);//изначаль выбран mode = 1
+			importSelectedFiles = Bridge.openFiles(1);//изначально выбран mode = 1
 			console.log(importSelectedFiles);
 		});
 		
