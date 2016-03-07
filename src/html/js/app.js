@@ -212,7 +212,7 @@ $(function() {
 		
 		$('.jsOpenFilesButton').click(function(e){
 			e.preventDefault();
-			importSelectedFiles = Bridge.openFiles(1);//изначаль выбран mode = 1
+			importSelectedFiles = Bridge.open_files(1);//изначаль выбран mode = 1
 			console.log(importSelectedFiles);
 		});
 		
@@ -252,7 +252,7 @@ $(function() {
 			};
 			importSelectedFiles = undefined;
 			if (!App.useStubs) {
-				var list = Bridge.importPackages(JSON.stringify(data));
+				var list = Bridge.import_packages(JSON.stringify(data));
 			} else {
 				var list = "[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"Терминология\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"Эмулятор терминала\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]";	
 			}
