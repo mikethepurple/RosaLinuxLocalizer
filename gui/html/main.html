@@ -21,13 +21,17 @@
   </nav>
 
     <div class="main_container">
-        <div class="left_block">
-			<div class="list-group" id="packages_list_container">
-				
+		<div class="left_block">
+			<div class="left_block_internal">
+				<div class="list-group" id="packages_list_container">
+					
+				</div>
 			</div>
-        </div>
-        <div class="right_block" id="workplace_container">
+		</div>
+		<div class="right_block">
+			<div class="right_block_internal" id="workplace_container">
 			
+			</div>
         </div>
     </div>
 
@@ -49,6 +53,7 @@
     </script>
 	
 	<script id="packageTempl" type="x-tmpl-mustache">
+		<h1 class="package_title">{{package_name}}</h1>
 		<table class="table table-borderless">
 			<tr>
 				<td class="col-sm-6 text-right"><b>Имя rpm-файла:</b></td>
@@ -143,25 +148,26 @@
 	</script>
 	
 	<script id="importPackagesTempl" type="x-tmpl-mustache">
+		<h1 class="settings_title">Импорт пакетов</h1>
 		<form class="form-horizontal importForm">
 		  <div class="form-group">
-			  <label for="importTypeLabel" class="col-sm-3 control-label">Тип импорта</label>
-			  <div class="radio col-sm-9">
+			  <label for="importTypeLabel" class="col-sm-6 control-label">Тип импорта</label>
+			  <div class="radio col-sm-6">
 				<label>
 					<input type="radio" id="files" name="importType" value="files" checked>один или несколько rpm-файлов
 				</label>
 			  </div>
-			  <div class="radio col-sm-9 col-sm-offset-3">
+			  <div class="radio col-sm-6 col-sm-offset-6">
 				<label>
 					<input type="radio" id="dir" name="importType" value="dir">все rpm-файлы из директории
 				</label>
 			  </div>
-			  <div class="radio col-sm-9 col-sm-offset-3">
+			  <div class="radio col-sm-6 col-sm-offset-6">
 				<label>
 					<input type="radio" id="repo" name="importType" value="repo">все rpm-файлы из удаленного репозитория
 				</label>
 			  </div>
-			  <div class="radio col-sm-9 col-sm-offset-3">
+			  <div class="radio col-sm-6 col-sm-offset-6">
 				<label>
 					<input type="radio" id="custom" name="importType" value="custom">список директорий/репозиториев из текстового файла
 				</label>
@@ -169,14 +175,14 @@
 		  </div>
 		  
 		  <div class="form-group" id="import_control_container">
-			<label for="importTypeLabel" class="col-sm-3 control-label file_chooser_label">Выберите файлы</label>
-			<div class="radio col-sm-9">
+			<label for="importTypeLabel" class="col-sm-6 control-label file_chooser_label">Выберите файлы</label>
+			<div class="radio col-sm-6">
 				<button class="btn btn-default file_chooser_button jsOpenFilesButton" id="importControlLabel"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;<span class="jsOpenFilesButtonText">Обзор...</span></button>
 			</div>
 		  </div>
 		  
 		  <div class="form-group">
-			<div class="col-sm-offset-3 col-sm-9">
+			<div class="col-sm-offset-6 col-sm-6">
 			  <button type="submit" class="btn btn-primary jsImportPackagesButton"><span class="glyphicon glyphicon-save"></span> Импортировать</button>
 			</div>
 		  </div>
@@ -184,7 +190,7 @@
 	</script>
 	
 	<script id="importControlFileTempl" type="x-tmpl-mustache">
-		<label for="importControlLabel" class="col-sm-3 control-label file_chooser_label">
+		<label for="importControlLabel" class="col-sm-6 control-label file_chooser_label">
 			{{#files}}
 				Выберите файл{{#multiple}}ы{{/multiple}}
 			{{/files}}
@@ -192,13 +198,13 @@
 				Выберите директорию
 			{{/files}}
 		</label>
-		<div class="radio col-sm-9">
+		<div class="radio col-sm-6">
 			<button class="btn btn-default file_chooser_button jsOpenFilesButton" id="importControlLabel"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;<span class="jsOpenFilesButtonText">Обзор...</span></button>
 		</div>
 	</script>
 	<script id="importControlRepoTempl" type="x-tmpl-mustache">
-		<label for="importControlLabel" class="col-sm-3 control-label">Адрес репозитория</label>
-		<div class="col-sm-9">
+		<label for="importControlLabel" class="col-sm-6 control-label">Адрес репозитория</label>
+		<div class="col-sm-6">
 			<input type="text" class="form-control" name="repo" id="importControlLabel" placeholder="Введите адрес удаленного репозитория...">
 		</div>
 	</script>
