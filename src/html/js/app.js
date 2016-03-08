@@ -161,6 +161,8 @@ $(function() {
 		App.clearCurrentLocation();
 		$(e.target).parent().addClass("active");
 		
+		$(".variablesForTranslate").tokenfield();
+		
 		$(".jsSaveSettingsButton").click(function(e){
 			e.preventDefault();
 			$form = $(".settingsForm");
