@@ -72,7 +72,7 @@ $(function() {
                                         className: "btn-warning",
                                         callback: function() {
 											if (!self.useStubs) {
-												var translatedText = Bridge.getTranslation(textEn);
+												var translatedText = Bridge.get_translation(textEn);
 											} else {
 												var translatedText = "Переведенный текст.";
 											}
@@ -83,7 +83,7 @@ $(function() {
                         });
 				} else {
 					if (!self.useStubs) {
-						var translatedText = Bridge.getTranslation(textEn);
+						var translatedText = Bridge.get_translation(textEn);
 					} else {
 						var translatedText = "Переведенный текст.";
 					}
@@ -124,7 +124,7 @@ $(function() {
 				};
 				console.log(data);
 				
-				Bridge.saveTranslations(JSON.stringify(data));
+				Bridge.save_translations(JSON.stringify(data));
 			});
 		},
 		
@@ -148,7 +148,7 @@ $(function() {
 	
 	$(".jsOpenSettings").click(function(e){
 		if (!App.useStubs) {
-			var list = Bridge.getSettings();
+			var list = Bridge.get_settings();
 		} else {
 			var list = "{\"yandex_api_key\":\"webuy23dn289fydvbh8912e9vcydbu2e3rgvbudio2ecbudnvucbdowbu\",\"abf_projects_group\":\"import\",\"abf_login\":\"login\",\"abf_password\":\"password\",\"branches\":[{\"name\":\"import_cooker\",\"active\":false,\"first\":true},{\"name\":\"import_mandriva\",\"active\":false,\"first\":false},{\"name\":\"master\",\"active\":false,\"first\":false},{\"name\":\"red3\",\"active\":false,\"first\":false},{\"name\":\"rosa2012.1\",\"active\":false,\"first\":false},{\"name\":\"rosa2012lts\",\"active\":false,\"first\":false},{\"name\":\"rosa2014.1\",\"active\":true,\"first\":false}],\"variables\":[{\"name\":\"Name\",\"last\":false},{\"name\":\"Comment\",\"last\":true}]}";	
 		}
@@ -195,7 +195,7 @@ $(function() {
 			};
 			console.log(data);
 			
-			Bridge.saveSettings(JSON.stringify(data));
+			Bridge.save_settings(JSON.stringify(data));
 		});
 	});
 	
@@ -235,7 +235,7 @@ $(function() {
 			if (this.value == 'files' || this.value == 'dir' || this.value == 'custom') {
 				$('.jsOpenFilesButton').click(function(e){
 					e.preventDefault();
-					importSelectedFiles = Bridge.openFiles(mode);
+					importSelectedFiles = Bridge.open_files(mode);
 					console.log(importSelectedFiles);
 				});
 			}
