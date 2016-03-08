@@ -15,7 +15,8 @@ class Browser(QWebView):
         frame = self.page().mainFrame()
         print(frame.toHtml().encode('utf-8'))
 
-    def getTranslation(self, text):
+    @pyqtSlot(str, result=str)
+    def get_translation(self, text):
         pass
 
     @pyqtSlot(str, result=str)
@@ -29,13 +30,16 @@ class Browser(QWebView):
             print(json.loads(values))
             return [full_project_info("import", f, ["Name", "Comment"]) for f in json.loads(values)]
 
-    def getSettings(self):
+    @pyqtSlot(result=str)
+    def get_settings(self):
         pass
 
-    def saveSettings(self, settings):
+    @pyqtSlot(str)
+    def save_settings(self, settings):
         pass
 
-    def saveTranslations(self, translations):
+    @pyqtSlot(str)
+    def save_translations(self, translations):
         pass
 
     @pyqtSlot(int, result=str)
