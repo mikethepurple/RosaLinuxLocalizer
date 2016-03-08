@@ -248,7 +248,7 @@ $(function() {
 			var $form = $(".importForm");
 			var data = {
 				type: $form.find(":checked").val(),
-				values: importSelectedFiles || [ $form.find("#importControlLabel").val() ]
+				values: JSON.parse(importSelectedFiles) || [ $form.find("#importControlLabel").val() ]
 			};
 			importSelectedFiles = undefined;
 			if (!App.useStubs) {

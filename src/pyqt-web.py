@@ -4,7 +4,7 @@ from PyQt4.QtGui import QApplication, QFileDialog
 from PyQt4.QtCore import QUrl, QObject, pyqtSlot
 from PyQt4.QtWebKit import QWebView, QWebInspector, QWebSettings
 from handsome import full_project_info
-
+from translation import yandex_translate
 
 # noinspection PyArgumentList
 class Browser(QWebView):
@@ -18,18 +18,18 @@ class Browser(QWebView):
 
     @pyqtSlot(str, result=str)
     def get_translation(self, text):
-        pass
+        yandex_api_key = "trnsl.1.1.20160131T164826Z.1cd5efb8cc6af7a6.0d34545e70be2a8bdd261d6cf743ae3df1429d13"
+        return yandex_translate(yandex_api_key, "en-ru", text)
+
 
     @pyqtSlot(str, result=str)
     def import_packages(self, jsonData):
         data = json.loads(jsonData)
         if data["type"] == "files":
-            values = json.loads(data["values"])
+            values = data["values"]
             print(values)
             print(type(values))
-            print(data["values"])
-            print(json.loads(values))
-            return [full_project_info("import", f, ["Name", "Comment"]) for f in json.loads(values)]
+            return json.dumps([full_project_info("import", f, ["Name", "Comment"]) for f in values])
 
     @pyqtSlot(result=str)
     def get_settings(self):
@@ -48,7 +48,7 @@ class Browser(QWebView):
         a = QFileDialog()
         if mode == 1:
             v = a.getOpenFileNames(caption="Импорт файлов rpm...", filter="RPM Files (*.rpm);;Any files (*.*)")
-            return json.dumps(str(v))
+            return json.dumps(v)
         elif mode == 2:
             return a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)
         elif mode == 3:
