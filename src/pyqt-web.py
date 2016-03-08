@@ -6,6 +6,7 @@ from PyQt4.QtWebKit import QWebView, QWebInspector, QWebSettings
 from handsome import full_project_info
 
 
+# noinspection PyArgumentList
 class Browser(QWebView):
     def __init__(self):
         QWebView.__init__(self)
