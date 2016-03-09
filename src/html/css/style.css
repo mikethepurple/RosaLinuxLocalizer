@@ -79,6 +79,28 @@ body {
     margin-top: 30px;
 }
 
+.delete_branch {
+	display: inline-block;
+	float: none;
+}
+
+.add_brunch_form_group {
+	width: 340px;
+}
+
+.error_brunch_container {
+	display: none;
+	padding: 15px;
+	font-weight: 700;
+}
+
+.error_add_brunch_container {
+	display: none;
+	padding: 15px;
+	margin-bottom: 15px;
+	font-weight: 700;
+}
+
 
 
 

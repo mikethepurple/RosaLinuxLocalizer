@@ -139,19 +139,38 @@
 		  </div>
 		  <div class="form-group">
 			<label for="inputVariables" class="col-sm-3 control-label">Переменные для перевода</label>
-			<div class="col-sm-9">
+			<div class="col-sm-9 variablesForTranslateContainer" data-placement="bottom" title="Введите название переменной и нажмите Enter">
 			  <input type="text" class="form-control variablesForTranslate" id="inputVariables" placeholder="Имена переменных для поиска в desktop-файлах..." value="{{#variables}}{{name}}{{^last}},{{/last}}{{/variables}}" />
 			</div>
 		  </div>
 		  <div class="form-group">
-			  <label for="inputVariables" class="col-sm-3 control-label">Ветка разработки</label>
-			  {{#branches}}
-				  <div class="radio col-sm-9{{^first}} col-sm-offset-3{{/first}}">
-					<label>
-						<input type="radio" name="currentBranch" value="{{name}}"{{#active}} checked{{/active}}>{{name}}
-					</label>
-				  </div>
-			  {{/branches}}
+				<div class="bg-danger col-sm-9 col-sm-offset-3 error_brunch_container errorBrunchContainer">
+					
+				</div>
+			  <label for="inputBrunches" class="col-sm-3 control-label">Ветка разработки</label>
+			  <div class="col-sm-9 branchesRadios">
+				{{#branches}}
+					<div class="radio">
+						<label>
+							<input type="radio" id="inputBrunches" name="currentBranch" value="{{name}}"{{#active}} checked{{/active}}>{{name}}
+						</label>
+						<button type="button" class="close delete_branch jsDeleteBranch" aria-label="Remove"><span aria-hidden="true">&times;</span></button>
+					</div>
+				{{/branches}}
+			  </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="bg-danger col-sm-9 col-sm-offset-3 error_add_brunch_container errorAddBrunchContainer">
+					
+		    </div>
+			<div class="col-sm-9 col-sm-offset-3">
+				<div class="input-group input-group-sm add_brunch_form_group">
+					<input type="text" class="form-control jsAddBrunchField" id="addBrunchInput" placeholder="Введите название новой ветки...">
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default jsAddBrunchButton">Добавить</button>
+					</span>
+				</div>
+			</div>
 		  </div>
 		  <div class="form-group">
 			<div class="col-sm-offset-3 col-sm-9">

@@ -15,14 +15,14 @@ getPackages:
 						"variable_name": "Name",
 						"value": {
 							"en": "Terminology",
-							"ru": "Терминология"
+							"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 						}
 					},
 					{
 						"variable_name": "Comment",
 						"value": {
 							"en": "Terminal emulator",
-							"ru": "Эмулятор терминала"
+							"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 						}
 					}
 				]
@@ -339,14 +339,14 @@ getPackages:
 						"variable_name": "Name",
 						"value": {
 							"en": "Terminology5",
-							"ru": "Терминология"
+							"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 						}
 					},
 					{
 						"variable_name": "Comment",
 						"value": {
 							"en": "Terminal 5",
-							"ru": "Эмулятор терминала"
+							"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 						}
 					}
 				]
@@ -404,14 +404,14 @@ getPackages:
 						"variable_name": "Name",
 						"value": {
 							"en": "Terminology6",
-							"ru": "Терминология"
+							"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 						}
 					},
 					{
 						"variable_name": "Comment",
 						"value": {
 							"en": "Terminal emulator6",
-							"ru": "Эмулятор терминала"
+							"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 						}
 					}
 				]
@@ -469,14 +469,14 @@ getPackages:
 						"variable_name": "Name",
 						"value": {
 							"en": "Terminology7",
-							"ru": "Терминология"
+							"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 						}
 					},
 					{
 						"variable_name": "Comment",
 						"value": {
 							"en": "Terminal emulator7",
-							"ru": "Эмулятор терминала"
+							"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 						}
 					}
 				]
@@ -531,13 +531,13 @@ getSettings/setSettings:
 	"abf_login":"login",
 	"abf_password":"password",
 	"branches": [
-		{"name":"import_cooker", "active":false, "first":true},
-		{"name":"import_mandriva", "active":false, "first":false},
-		{"name":"master", "active":false, "first":false},
-		{"name":"red3", "active":false, "first":false},
-		{"name":"rosa2012.1", "active":false, "first":false},
-		{"name":"rosa2012lts", "active":false, "first":false},
-		{"name":"rosa2014.1", "active":true, "first":false}
+		{"name":"import_cooker", "active":false},
+		{"name":"import_mandriva", "active":false},
+		{"name":"master", "active":false},
+		{"name":"red3", "active":false},
+		{"name":"rosa2012.1", "active":false},
+		{"name":"rosa2012lts", "active":false},
+		{"name":"rosa2014.1", "active":true}
 	],
 	"variables": [
 		{
@@ -565,14 +565,14 @@ saveTranslations:
 					"variable_name": "Name",
 					"value": {
 						"en": "Terminology",
-						"ru": "Терминология"
+						"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 					}
 				},
 				{
 					"variable_name": "Comment",
 					"value": {
 						"en": "Terminal emulator",
-						"ru": "Эмулятор терминала"
+						"ru": "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
 					}
 				}
 			]
