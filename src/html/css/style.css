@@ -101,6 +101,38 @@ body {
 	font-weight: 700;
 }
 
+.error_import_container {
+	display: none;
+	padding: 15px;
+	margin-bottom: 15px;
+	font-weight: 700;
+	text-align: center;
+}
+
+.success_import_container {
+	display: none;
+	padding: 15px;
+	margin-bottom: 15px;
+	font-weight: 700;
+	text-align: center;
+}
+
+.error_settings_container {
+	display: none;
+	padding: 15px;
+	margin-bottom: 15px;
+	font-weight: 700;
+	text-align: center;
+}
+
+.success_settings_container {
+	display: none;
+	padding: 15px;
+	margin-bottom: 15px;
+	font-weight: 700;
+	text-align: center;
+}
+
 
 
 
