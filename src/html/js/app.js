@@ -203,7 +203,7 @@ $(function() {
 				
 				console.log(brunches.join(", "));
 				
-				if( $.inArray(text, brunches) == -1){
+				if( $.inArray(text, brunches) == -1) {
 					$er.hide();
 					$(".jsAddBrunchField").val("");
 					$(".branchesRadios").append('<div class="radio">'+
@@ -212,6 +212,7 @@ $(function() {
 												'	</label>'+
 												'	<button type="button" class="close delete_branch jsDeleteBranch" aria-label="Remove"><span aria-hidden="true">&times;</span></button>'+
 												'</div>');
+					$(".jsDeleteBranch").off('click');
 					$(".jsDeleteBranch").on('click', this.deleteBrunch.bind(this));
 				} else {
 					$er.html("Такая ветка уже добавлена!")
