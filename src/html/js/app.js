@@ -54,13 +54,13 @@ $(function() {
 			var rendered = Mustache.render(template, this.getPackageByProjectId(package_id));
 			$('#workplace_container').html(rendered);
 
-            $(".jsMachineTranslation").on('click', this.translateField.bind(this));
+            $(".jsTranslateField").on('click', this.translateFieldButtonClicked.bind(this));
 			$(".jsCancelPackageChangesButton").on('click', {id: package_id}, this.cancelPackageChanges.bind(this));
 			$(".jsSaveTranslationsButton").on('click', this.saveTranslationsButtonClicked.bind(this));
 			$(".jsCommitPackagePatchButton").on('click', this.commitPackagePatchButtonClicked.bind(this));
         },
 
-		translateField: function(event) {
+		translateFieldButtonClicked: function(event) {
 			var textEn = $(event.target).parent().prev().find("div.well").text();
 			console.log(textEn);
 			var targetField = $(event.target).next();
@@ -82,25 +82,34 @@ $(function() {
 							"Продолжить": {
 									className: "btn-warning",
 									callback: function() {
-										if (!self.useStubs) {
-											var translatedText = Bridge.get_translation(textEn);
-										} else {
-											var translatedText = "Переведенный текст.";
-										}
-										targetField.val(translatedText);
+                                        self.translateField(targetField, textEn);
 									}
 							},
 					}
 					});
 			} else {
-				if (!self.useStubs) {
-					var translatedText = Bridge.get_translation(textEn);
-				} else {
-					var translatedText = "Переведенный текст.";
-				}
-				targetField.val(translatedText);
+                this.translateField(targetField, textEn);
 			}
 		},
+
+        translateField: function(targetField, text) {
+            try {
+                if (!this.useStubs) {
+                    var result = JSON.parse(Bridge.get_translation(text));
+                } else {
+                    var result = {value:"Переведенный текст."};//{error: "Error!"};//
+                }
+                if(!(result.error && result.error.length > 0)) {
+                    targetField.val(result.value);
+                } else {
+                    console.log("error while translating text: " + result.error);
+                    this.showPackageErrorMessage(result.error);
+                }
+            } catch (e) {
+                console.log("error while translating text: " + e);
+                this.showPackageErrorMessage("Ошибка при попытке машинного перевода! Попробуйте еще раз.");
+            }
+        },
 
 		cancelPackageChanges: function(event) {
             event.preventDefault();
@@ -506,7 +515,13 @@ $(function() {
             this.hideImportInfoContainer();
 			event.preventDefault();
 			console.log("openFileChooser, mode: "+event.data.mode);
-			this.importSelectedFiles = Bridge.open_files(event.data.mode);//изначально выбран mode = 1
+            try {
+                this.importSelectedFiles = Bridge.open_files(event.data.mode);//изначально выбран mode = 1
+            } catch (e) {
+                console.log("error while open files: " + e);
+				this.showImportErrorMessage("Ошибка при выборе файлов! Попробуйте еще раз.");
+                this.importSelectedFiles = undefined;
+            }
 			console.log(this.importSelectedFiles);
 		},
 		
