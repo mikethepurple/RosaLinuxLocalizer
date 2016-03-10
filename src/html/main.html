@@ -20,12 +20,26 @@
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Команды <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li class="disabled"><a href="#">Добавить недостающие переводы</a></li>
+					<li class="dropdown-submenu disabled">
+                        <a tabindex="-1" href="#">Текущий пакет</a>
+                        <ul class="dropdown-menu">
+							<li><a href="#">Добавить недостающие переводы</a></li>
+							<li><a href="#">Коммит патча</a></li>
+							<li><a href="#">Скрыть</a></li>
+						</ul>
+                    </li>
+                    <li class="dropdown-submenu">
+                        <a tabindex="-1" href="#">Все пакеты</a>
+                        <ul class="dropdown-menu">
+							<li><a href="#">Добавить недостающие переводы</a></li>
+							<li class="disabled"><a href="#">Коммит всех патчей</a></li>
+							<li><a href="#">Скрыть локализированные</a></li>
+						</ul>
+                    </li>
 					<li role="separator" class="divider"></li>
-					<li class="disabled"><a href="#">Еще что-то</a></li>
-					<li class="disabled"><a href="#">Something else here</a></li>
 				</ul>
 			</li>
+			<li><a href="#" class="">Справка</a></li>
 		</ul>
 	</div>
   </nav>
@@ -104,8 +118,11 @@
                         {{/strings}}
                     </div>
                 {{/desktop_files}}
-              <!--button type="submit" class="btn btn-warning cancel_button"><span class="glyphicon glyphicon-remove"></span> Отменить изменения</button-->
-              <button type="submit" class="btn btn-primary pull-right jsSaveTranslationsButton"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить (коммит)</button>
+              <button class="btn btn-default jsCancelChangesButton"><span class="glyphicon glyphicon-remove"></span> Отменить</button>
+              <div class="pull-right">
+                  <button class="btn btn-default jsSaveTranslationsButton"><span class="glyphicon glyphicon-save"></span> Сохранить</button>
+                  <button class="btn btn-primary jsCommitPackagePatchButton"><span class="glyphicon glyphicon-floppy-disk"></span> Коммит патча</button>
+              </div>
             </form>
         {{/has_desktop_files}}
         {{^has_desktop_files}}<hr><h3 class="no_desktop_files">Строк для локализации не найдено</h3>{{/has_desktop_files}}

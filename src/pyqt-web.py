@@ -62,7 +62,7 @@ if __name__ == '__main__':
     view.setWindowTitle("Handsome Localizer v1.0")
     view.load(QUrl("html/main.html"))
     view.setVisible(True)
-    view.setMinimumWidth(768)
+    view.setMinimumWidth(787)
     view.setMinimumHeight(70)
     view.page().settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
     inspector = QWebInspector()

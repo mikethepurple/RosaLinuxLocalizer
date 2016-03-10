@@ -6,7 +6,7 @@ $(function() {
 		packages: [],
 		settings: {},
 		importSelectedFiles: undefined,
-		
+
 		init: function() {
 			this.reloadPackagesList();
 			
@@ -334,24 +334,24 @@ $(function() {
 			}
 		},
 		
-		hideBrunchErrors: function(event) {
+		hideBrunchErrors: function() {
 			$(".errorAddBrunchContainer").hide();
 			$(".errorBrunchContainer").hide();
 		},
 
         showSettingsErrorMessage: function(error) {
-            $(".errorSettingsContainer").html(error);
+            $(".errorSettingsContainer").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
             $(".errorSettingsContainer").show();
             $('.right_block').scrollTop(0);
         },
         
         showSettingsSuccessMessage: function(text) {
-            $(".successSettingsContainer").html(text);
+            $(".successSettingsContainer").html('<span class="glyphicon glyphicon-saved"></span> ' + text);
             $(".successSettingsContainer").show();
             $('.right_block').scrollTop(0);
         },
 		
-		hideSettingsInfoContainer: function(event) {
+		hideSettingsInfoContainer: function() {
 			$(".errorSettingsContainer").hide();
 			$(".successSettingsContainer").hide();
 		},
@@ -438,13 +438,13 @@ $(function() {
 		},
 
         showImportErrorMessage: function(error) {
-            $(".errorImportContainer").html(error);
+            $(".errorImportContainer").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
             $(".errorImportContainer").show();
             $('.right_block').scrollTop(0);
         },
 
         showImportSuccessMessage: function(text) {
-            $(".successImportContainer").html(text);
+            $(".successImportContainer").html('<span class="glyphicon glyphicon-ok"></span> ' + text);
             $(".successImportContainer").show();
             $('.right_block').scrollTop(0);
         },
