@@ -40,7 +40,7 @@ class Browser(QWebView):
         pass
 
     @pyqtSlot(str)
-    def save_translations(self, translations):
+    def commit_translations_patch(self, translations):
         pass
 
     @pyqtSlot(int, result=str)

@@ -234,12 +234,22 @@ $(function() {
         },
 
         commitPackagePatch: function(data) {
-            if (!self.useStubs) {
-                var res = Bridge.save_translations(JSON.stringify(data));
-            } else {
-                var res = "{}";
+            try {
+                if (!this.useStubs) {
+                    var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
+                } else {
+                    var result = {};//{error: "Error!"};
+                }
+                if(!(result.error && result.error.length > 0)) {
+                    this.showPackageSuccessMessage("Коммит выполнен.");
+                } else {
+                    console.log("error while committing translations: " + result.error);
+                    this.showPackageErrorMessage(result.error);
+                }
+            } catch (e) {
+                console.log("error while committing translations: " + e);
+                this.showPackageErrorMessage("Ошибка при попытке коммита! Попробуйте еще раз.");
             }
-            this.showPackageSuccessMessage("Коммит выполнен.");
         },
 		
 		getPackageByProjectId: function(projectId) {
