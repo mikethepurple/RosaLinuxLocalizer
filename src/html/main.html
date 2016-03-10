@@ -39,7 +39,6 @@
 					<li role="separator" class="divider"></li>
 				</ul>
 			</li>
-			<li><a href="#" class="">Справка</a></li>
 		</ul>
 	</div>
   </nav>
@@ -238,6 +237,7 @@
 			  <div class="radio col-sm-6 col-sm-offset-6">
 				<label>
 					<input type="radio" id="custom" name="importType" value="custom">список директорий/репозиториев из текстового файла
+					(<a href="#" class="import_type_custom_help_link jsShowImportCustomTypeHelp" data-toggle="popover">что это?</a>)
 				</label>
 			  </div>
 		  </div>
@@ -270,12 +270,34 @@
 			<button class="btn btn-default file_chooser_button jsOpenFilesButton" id="importControlLabel"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;<span class="jsOpenFilesButtonText">Обзор...</span></button>
 		</div>
 	</script>
+
 	<script id="importControlRepoTempl" type="x-tmpl-mustache">
 		<label for="importControlLabel" class="col-sm-6 control-label">Адрес репозитория</label>
 		<div class="col-sm-6">
 			<input type="text" class="form-control" name="repo" id="importControlLabel" placeholder="Введите адрес удаленного репозитория...">
 		</div>
 	</script>
+
+    <script id="importCustomTypeHelpTempl" type="x-tmpl-mustache">
+        Формат файла должен соответствовать типу yaml (www.yaml.org) и содержать следующий формат данных:
+        <pre class="yaml_template">
+places:
+  - type: file
+    path: <путь_к_файлу_rpm>
+  - type: dir
+    path: <путь_к_директории>
+  - type: repo
+    path: <путь_к_репозиторию></pre>
+        Пример:
+        <pre class="yaml_template">
+places:
+  - type: file
+    path: /home/user/terminology-rosa2014.1.x86_64.rpm
+  - type: file
+    path: /home/user/rpms/pidgin-1.0-rosa2014.1.i586.rpm
+  - type: dir
+    path: /home/user/projects/build</pre>
+    </script>
   </body>
 </html>
 

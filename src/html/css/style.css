@@ -156,7 +156,24 @@ body {
 	text-align: center;
 }
 
+.import_type_custom_help_link {
+    border-bottom: dashed 1px #337ab7;
+    text-decoration: none;
+}
 
+.import_type_custom_help_link:hover {
+    border-bottom: solid 1px #23527c;
+    text-decoration: none;
+}
+
+.popover{
+    max-width: 400px;
+    z-index: 10000;
+}
+
+.yaml_template {
+    margin-top: 10px;
+}
 
 
 

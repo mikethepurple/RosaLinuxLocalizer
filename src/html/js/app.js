@@ -507,7 +507,11 @@ $(function() {
 			$(event.target).parent().addClass("active");
 			
 			$(".jsOpenFilesButton").on('click', {mode: 1}, this.openFileChooser.bind(this));
-			$("input[type=radio][name=importType]").on('change', this.changeImportType.bind(this));	
+			$("input[type=radio][name=importType]").on('change', this.changeImportType.bind(this));
+            this.initPopoverForImportHelp();
+            $(".jsShowImportCustomTypeHelp").on('click', function() {
+                $(".jsShowImportCustomTypeHelp").popover('show');
+            });
 			$(".jsImportPackagesButton").on('click', this.importPackages.bind(this));		
 		},
 		
@@ -600,8 +604,33 @@ $(function() {
         hideImportInfoContainer: function() {
             $(".errorImportContainer").hide();
             $(".successImportContainer").hide();
-        }
+        },
 
+        initPopoverForImportHelp: function() {
+            $('.popover').remove();
+            $(".jsShowImportCustomTypeHelp").popover({
+                placement: "right auto",
+                trigger: "manual",
+                html: true,
+                container: 'body',
+                content: function() {
+                    var template = $('#importCustomTypeHelpTempl').html();
+                    Mustache.parse(template);
+                    return Mustache.render(template, {});
+                }
+            });
+            $(window).off('resize');
+            $(window).on('resize', function() {
+                if($('.jsShowImportCustomTypeHelp').data('bs.popover').tip().hasClass('in') == true) {
+                    $(".jsShowImportCustomTypeHelp").popover('show');
+                }
+            });
+            $('body').on('click', function (e) {
+                if ($(e.target).data('toggle') !== 'popover' && $(e.target).parents('.popover.in').length === 0) {
+                    $('[data-toggle="popover"]').popover('hide');
+                }
+            });
+        }
 	};
 	
 	App.init();
