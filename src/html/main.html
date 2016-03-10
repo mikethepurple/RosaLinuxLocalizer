@@ -78,7 +78,13 @@
     </script>
 	
 	<script id="packageTempl" type="x-tmpl-mustache">
-		<h1 class="package_title">{{package_name}}</h1>
+		<h1 class="package_title jsPackageName" data-project-id="{{project_id}}">{{package_name}}</h1>
+		<div class="bg-danger col-sm-12 error_package_container errorPackageContainer">
+
+		</div>
+		<div class="bg-success col-sm-12 success_package_container successPackageContainer">
+
+		</div>
 		<table class="table table-borderless">
 			<tr>
 				<td class="col-sm-6 text-right"><b>Имя rpm-файла:</b></td>
@@ -118,7 +124,7 @@
                         {{/strings}}
                     </div>
                 {{/desktop_files}}
-              <button class="btn btn-default jsCancelChangesButton"><span class="glyphicon glyphicon-remove"></span> Отменить</button>
+              <button class="btn btn-default jsCancelPackageChangesButton"><span class="glyphicon glyphicon-remove"></span> Отменить</button>
               <div class="pull-right">
                   <button class="btn btn-default jsSaveTranslationsButton"><span class="glyphicon glyphicon-save"></span> Сохранить</button>
                   <button class="btn btn-primary jsCommitPackagePatchButton"><span class="glyphicon glyphicon-floppy-disk"></span> Коммит патча</button>

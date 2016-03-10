@@ -44,16 +44,22 @@ $(function() {
 				var id = $(event.target.parentElement).data("id");
 				$(event.target.parentElement).addClass("active");
 			}
-			
-			var template = $('#packageTempl').html();
-			Mustache.parse(template); 
-			var rendered = Mustache.render(template, this.getPackageByProjectId(id));
-			$('#workplace_container').html(rendered);
-			
-			$(".jsMachineTranslation").on('click', this.translateField.bind(this));
-			$(".jsSaveTranslationsButton").on('click', this.saveTranslations.bind(this));
+
+			this.renderPackage(id);
 		},
-		
+
+        renderPackage: function(package_id) {
+            var template = $('#packageTempl').html();
+			Mustache.parse(template);
+			var rendered = Mustache.render(template, this.getPackageByProjectId(package_id));
+			$('#workplace_container').html(rendered);
+
+            $(".jsMachineTranslation").on('click', this.translateField.bind(this));
+			$(".jsCancelPackageChangesButton").on('click', {id: package_id}, this.cancelPackageChanges.bind(this));
+			$(".jsSaveTranslationsButton").on('click', this.saveTranslationsButtonClicked.bind(this));
+			$(".jsCommitPackagePatchButton").on('click', this.commitPackagePatchButtonClicked.bind(this));
+        },
+
 		translateField: function(event) {
 			var textEn = $(event.target).parent().prev().find("div.well").text();
 			console.log(textEn);
@@ -95,14 +101,48 @@ $(function() {
 				targetField.val(translatedText);
 			}
 		},
-		
-		saveTranslations: function(event) {
-			event.preventDefault();
+
+		cancelPackageChanges: function(event) {
+            event.preventDefault();
+            var id = event.data.id;
+            var self = this;
+            bootbox.dialog({
+                message: "Строки с переводами будут заменены на версию последнего сохранения.",
+                title: "Отменить внесенные изменения?",
+                onEscape: function() {},
+                show: true,
+                backdrop: true,
+                closeButton: true,
+                animate: true,
+                className: "confirm-cancel-changes-text",
+                buttons: {
+                        "Отменить": function() {},
+                        "Продолжить": {
+                                className: "btn-warning",
+                                callback: function() {
+                                    self.renderPackage(id);
+                                }
+                        },
+                }
+            });
+        },
+
+		saveTranslationsButtonClicked: function(event) {
+            event.preventDefault();
 			$form = $(".translationsForm");
-			
-			$desktopFiles = $(".translationsForm .desktopFile");
+
+            var translationDesktopFiles = this.getTranslationsFromDOM();
+            var p = this.getPackageByProjectId($(".jsPackageName").data("project-id"));
+
+            p.desktop_files = translationDesktopFiles;
+
+            this.showPackageSuccessMessage("Изменения сохранены.");
+		},
+
+        getTranslationsFromDOM: function() {
+            $desktopFiles = $(".translationsForm .desktopFile");
 			var files = [];
-			
+
 			$.each($desktopFiles, function( index, value ) {
 				var obj = {path: $(value).find(".desktopFilePath").html(), strings: []};
 				var strs = $(value).find(".stringForTranslate");
@@ -111,27 +151,96 @@ $(function() {
 					var str = {
 						variable_name: $(value).data("varname"),
 						value: {
-							en: $(value).find("#stringEn").html(),
-							ru: $(value).find("#stringRu").val()
+							en: $(value).find("#stringEn").html().trim(),
+							ru: $(value).find("#stringRu").val().trim()
 						}
 					};
 					stringList.push(str);
 				});
-				
+
 				obj.strings = stringList;
-				
+
 				files.push(obj);
 			});
-							
-			var data = {
-				git: $(".gitRepository").html(),
-				desktop_files: files
-			};
-			
-			console.log(data);
-			
-			Bridge.save_translations(JSON.stringify(data));
-		},
+
+            console.log(files);
+
+            return files;
+        },
+
+        showPackageErrorMessage: function(error) {
+            $(".errorPackageContainer").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
+            $(".errorPackageContainer").show();
+            $('.right_block').scrollTop(0);
+        },
+
+        showPackageSuccessMessage: function(text) {
+            $(".successPackageContainer").html('<span class="glyphicon glyphicon-ok"></span> ' + text);
+            $(".successPackageContainer").show();
+            $('.right_block').scrollTop(0);
+        },
+
+        commitPackagePatchButtonClicked: function(event) {
+            event.preventDefault();
+            var translationDesktopFiles = this.getTranslationsFromDOM();
+            var hasEmptyStrings = this.checkEmptyStrings(translationDesktopFiles);
+
+            if (hasEmptyStrings) {
+                var self = this;
+                bootbox.dialog({
+					message: "Локализация добавлена не для всех строк.",
+					title: "Продолжить?",
+					onEscape: function() {},
+					show: true,
+					backdrop: true,
+					closeButton: true,
+					animate: true,
+					className: "confirm-commit-patch-text",
+					buttons: {
+							"Отменить": function() {},
+							"<span class=\"glyphicon glyphicon-floppy-disk\"></span> Все-равно сделать коммит": {
+									className: "btn-primary",
+									callback: function() {
+                                        var p = self.getPackageByProjectId($(".jsPackageName").data("project-id"));
+
+                                        var data = {
+                                            git: p.git,
+                                            desktop_files: translationDesktopFiles
+                                        };
+
+                                        console.log(data);
+
+                                        p.desktop_files = data.desktop_files;
+
+										self.commitPackagePatch(data);
+									}
+							},
+					}
+					});
+            } else {
+                var p = this.getPackageByProjectId($(".jsPackageName").data("project-id"));
+
+                var data = {
+                    git: p.git,
+                    desktop_files: translationDesktopFiles
+                };
+
+                console.log(data);
+
+                p.desktop_files = data.desktop_files;
+
+                this.commitPackagePatch(data);
+            }
+        },
+
+        commitPackagePatch: function(data) {
+            if (!self.useStubs) {
+                var res = Bridge.save_translations(JSON.stringify(data));
+            } else {
+                var res = "{}";
+            }
+            this.showPackageSuccessMessage("Коммит выполнен.");
+        },
 		
 		getPackageByProjectId: function(projectId) {
 			var res = null;
@@ -145,7 +254,21 @@ $(function() {
 			});
 			return res;
 		},
-		
+
+        checkEmptyStrings: function(desktop_files) {
+            var res = false;
+            $.each(desktop_files, function( index, f ) {
+                $.each(f.strings, function( index, str ) {
+                    if (!(str.value.ru && str.value.ru.trim().length > 0)) {
+                        res = true;
+                        return false;
+                    }
+                });
+                return false;
+            });
+            return res;
+        },
+
 		clearCurrentLocation: function() {
 			$(".nav li").removeClass("active");
 			$(".jsPackagesListItem").removeClass("active");
@@ -448,7 +571,6 @@ $(function() {
             $(".successImportContainer").show();
             $('.right_block').scrollTop(0);
         },
-
 
         hideImportInfoContainer: function() {
             $(".errorImportContainer").hide();
