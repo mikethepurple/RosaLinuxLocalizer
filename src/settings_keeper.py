@@ -9,3 +9,4 @@ def load_settings():
 def save_settings(settings):
     with open("/home/zimy/.config/handsome.json", "w") as storage:
         storage.write(settings)
+    return settings

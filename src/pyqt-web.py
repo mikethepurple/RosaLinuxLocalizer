@@ -4,7 +4,9 @@ from PyQt4.QtGui import QApplication, QFileDialog
 from PyQt4.QtCore import QUrl, QObject, pyqtSlot
 from PyQt4.QtWebKit import QWebView, QWebInspector, QWebSettings
 from handsome import full_project_info
+from settings_keeper import load_settings, save_settings
 from translation import yandex_translate
+
 
 # noinspection PyArgumentList
 class Browser(QWebView):
@@ -19,12 +21,11 @@ class Browser(QWebView):
     @pyqtSlot(str, result=str)
     def get_translation(self, text):
         yandex_api_key = "trnsl.1.1.20160131T164826Z.1cd5efb8cc6af7a6.0d34545e70be2a8bdd261d6cf743ae3df1429d13"
-        return yandex_translate(yandex_api_key, "en-ru", text)
-
+        return {"values": yandex_translate(yandex_api_key, "en-ru", text)}
 
     @pyqtSlot(str, result=str)
-    def import_packages(self, jsonData):
-        data = json.loads(jsonData)
+    def import_packages(self, json_data):
+        data = json.loads(json_data)
         if data["type"] == "files":
             values = data["values"]
             print(values)
@@ -33,11 +34,11 @@ class Browser(QWebView):
 
     @pyqtSlot(result=str)
     def get_settings(self):
-        pass
+        return load_settings()
 
-    @pyqtSlot(str)
+    @pyqtSlot(result=str)
     def save_settings(self, settings):
-        pass
+        return save_settings(settings)
 
     @pyqtSlot(str)
     def commit_translations_patch(self, translations):
