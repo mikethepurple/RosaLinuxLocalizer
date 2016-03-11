@@ -19,6 +19,9 @@ $(function() {
 			$(".jsPackagesListItem").removeClass("active");
 		},
 
+
+
+
         /* ====   Events   ==== */
 
         /* import */
@@ -110,6 +113,9 @@ $(function() {
 
 				if (json_list.packages) {
 					App.packages = json_list.packages;
+
+                    this.setInitialStatuses();
+
 					console.log(App.packages.length + " packages loaded:\n" + JSON.stringify(App.packages));
 					App.reloadPackagesList();
 
@@ -387,6 +393,17 @@ $(function() {
 
             p.desktop_files = translationDesktopFiles;
 
+            var oldStatus = p.status;
+
+            if (p.status === 5) {//возврат от состояния "закоммичен" к "переведены все строки"
+                p.status = 4;
+            }
+
+            p.status = this.getPackageStatus(p);
+            if (oldStatus !== p.status) {
+                this.reloadPackagesList(p.project_id);
+            }
+
             this.showPackageSuccessMessage("<strong>Изменения сохранены.</strong>");
 		},
 
@@ -412,38 +429,26 @@ $(function() {
 									className: "btn-primary",
 									callback: function() {
                                         var p = self.getPackageByProjectId($(".jsPackageName").data("project-id"));
-
-                                        var data = {
-                                            git: p.git,
-                                            desktop_files: translationDesktopFiles
-                                        };
-
-                                        console.log(data);
-
-                                        p.desktop_files = data.desktop_files;
-
-										self.commitPackagePatch(data);
+                                        console.log(translationDesktopFiles);
+                                        p.desktop_files = translationDesktopFiles;
+										self.commitPackagePatch(p);
 									}
 							},
 					}
 					});
             } else {
                 var p = this.getPackageByProjectId($(".jsPackageName").data("project-id"));
-
-                var data = {
-                    git: p.git,
-                    desktop_files: translationDesktopFiles
-                };
-
-                console.log(data);
-
-                p.desktop_files = data.desktop_files;
-
-                this.commitPackagePatch(data);
+                console.log(translationDesktopFiles);
+                p.desktop_files = translationDesktopFiles;
+                this.commitPackagePatch(p);
             }
         },
 
         /* ====   End of events   ==== */
+
+
+
+
         /* ====   Main functions   ==== */
 
         /* import */
@@ -466,25 +471,39 @@ $(function() {
             }
         },
 
+        setInitialStatuses: function() {
+            var self = this;
+			$.each(this.packages, function( p_index, p ) {
+                p.status = self.getPackageStatus(p);
+			});
+        },
+
         /* package */
 
-		reloadPackagesList: function() {
+		reloadPackagesList: function(active_project_id) {
 			var template = $('#packageListItemTempl').html();
 			Mustache.parse(template); 
 			var obj = {
 				"packages": this.packages, 
 				"statusText": function(status) {
-					switch (this.status) {
-						case "2": return "Готов к локализации";
-						case "3": return "Не найдены строки для локализации";
-						case "4": return "Локализация добавлена";
-						default: return "Статус неизвестен";
+					switch (this.status + "") {
+                        case "0": return "<span class=\"label label-warning\">Статус не определен</span>";
+                        case "1": return "<span class=\"label label-default\">Не найдены строки</span>";
+						case "2": return "<span class=\"label label-info\">Не локализирован</span>";
+						case "3": return "<span class=\"label label-info\">Локализирован частично</span>";
+						case "4": return "<span class=\"label label-success\">Локализирован, готов к коммиту</span>";
+						case "5": return "<span class=\"label label-primary\">Коммит патча выполнен</span>";
+						default: return "<span class=\"label label-warning\">Статус не определен</span>";
 					}
 				}
 			}
 			var rendered = Mustache.render(template, obj);
 			$('#packages_list_container').html(rendered);
-			
+
+            if (active_project_id) {
+                $('#packages_list_container').find("[data-id=" + active_project_id + "]").addClass("active");
+            }
+
 			$(".jsPackagesListItem").on('click', this.packagesListItemClicked.bind(this));
 		},
 
@@ -564,18 +583,46 @@ $(function() {
         checkEmptyStrings: function(desktop_files) {
             var res = false;
             $.each(desktop_files, function( index, f ) {
+                console.log(f);
                 $.each(f.strings, function( index, str ) {
                     if (!(str.value.ru && str.value.ru.trim().length > 0)) {
                         res = true;
                         return false;
                     }
                 });
-                return false;
             });
             return res;
         },
 
-        commitPackagePatch: function(data) {
+        getPackageStatus: function(packageObj) {
+            /* statuses: 0 - статус не определен, 1 - не найдены строки для локализации, 2 - не локализирован, 3 - локализирован частично, 4 - локализирован, готов к коммиту, 5 - коммит патча выполнен. */
+            if (!(packageObj.status && packageObj.status + "" === "5")) {
+                var totalCount = 0;
+                var translatedCount = 0;
+                $.each(packageObj.desktop_files, function (f_index, file) {
+                    $.each(file.strings, function (s_index, str) {
+                        totalCount++;
+                        if (str.value && str.value.ru && str.value.ru.trim().length > 0) {
+                            translatedCount++;
+                        }
+                    });
+                });
+                if (totalCount === 0) return 1;
+                if (translatedCount === 0) return 2;
+                if (totalCount > translatedCount) return 3;
+                if (totalCount === translatedCount) return 4;
+                return 0;
+            } else {
+                return 5;
+            }
+        },
+
+        commitPackagePatch: function(packageObj) {
+            var data = {
+                git: packageObj.git,
+                desktop_files: packageObj.desktop_files
+            };
+
             try {
                 if (!this.useStubs) {
                     var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
@@ -584,6 +631,8 @@ $(function() {
                 }
                 if(!(result.error && result.error.length > 0)) {
                     this.showPackageSuccessMessage("<strong>Коммит выполнен.</strong>");
+                    packageObj.status = 5;
+                    this.reloadPackagesList(packageObj.project_id);
                 } else {
                     console.log("error while committing translations: " + result.error);
                     this.showPackageErrorMessage('<strong>' + result.error + '</strong>');
@@ -595,6 +644,10 @@ $(function() {
         },
 	
         /* ====   End of main functions   ==== */
+
+
+
+
         /* ====   Alerts and popups  ==== */
 
         /* import */

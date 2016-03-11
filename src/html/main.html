@@ -70,7 +70,7 @@
 		{{#packages}}
 			<a class="list-group-item jsPackagesListItem" data-id="{{project_id}}">
 				<h4 class="list-group-item-heading">{{package_name}}</h4>
-				<p class="list-group-item-text text-right"><span class="label label-primary">{{statusText}}</span></p>
+				<p class="list-group-item-text text-right">{{{statusText}}}</p>
 			</a>
 		{{/packages}}
 		{{^packages}}<p class="text-center not_imported_packages"><strong>Пакеты не импортированы</strong></p>{{/packages}}
