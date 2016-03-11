@@ -36,7 +36,7 @@ class Browser(QWebView):
     def get_settings(self):
         return load_settings()
 
-    @pyqtSlot(result=str)
+    @pyqtSlot(str, result=str)
     def save_settings(self, settings):
         return save_settings(settings)
 
