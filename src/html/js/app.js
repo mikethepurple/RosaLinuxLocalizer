@@ -519,12 +519,14 @@ $(function() {
 			event.preventDefault();
 			console.log("openFileChooser, mode: "+event.data.mode);
             try {
-                this.importSelectedFiles = Bridge.open_files(event.data.mode);//изначально выбран mode = 1
+                var result = Bridge.open_files(event.data.mode);
+                this.importSelectedFiles = JSON.parse(result);//изначально выбран mode = 1
             } catch (e) {
                 console.log("error while open files: " + e);
 				this.showImportErrorMessage("<strong>Ошибка при выборе файлов!</strong> Попробуйте еще раз.");
                 this.importSelectedFiles = undefined;
             }
+            this.reloadImportControls();
 			console.log(this.importSelectedFiles);
 		},
 		
@@ -545,11 +547,32 @@ $(function() {
 			Mustache.parse(template); 
 			var rendered = Mustache.render(template, {"files": !(type == 'dir'), "multiple":(type == 'files')});
 			$('#import_control_container').html(rendered);
-			
+
+            this.importSelectedFiles = undefined;
+            this.reloadImportControls();
+
 			if (type == 'files' || type == 'dir' || type == 'custom') {
 				$(".jsOpenFilesButton").on('click', {mode: mode}, this.openFileChooser.bind(this));
-			}
+			} else {
+                $(".jsImportRepoInput").on('input', this.reloadImportControls.bind(this));
+            }
 		},
+
+        reloadImportControls: function() {
+            if (this.importSelectedFiles && this.importSelectedFiles.length) {
+                $(".jsFileChooserCount").html(this.importSelectedFiles.length);
+            }
+            if ((this.importSelectedFiles && this.importSelectedFiles.length > 0) ||
+                ($(".jsImportRepoInput") && $(".jsImportRepoInput").val() && $(".jsImportRepoInput").val().trim().length > 0)) {
+                if ($(".jsImportPackagesButton").hasClass("disabled")) {
+                    $(".jsImportPackagesButton").removeClass("disabled");
+                }
+            } else {
+                if (!($(".jsImportPackagesButton").hasClass("disabled"))) {
+                    $(".jsImportPackagesButton").addClass("disabled");
+                }
+            }
+        },
 	
 		importPackages: function(event) {
             this.hideImportInfoContainer();
@@ -559,7 +582,7 @@ $(function() {
 					var $form = $(".importForm");
 					var data = {
 						type: $form.find(":checked").val(),
-						values: JSON.parse(this.importSelectedFiles) || [ $form.find("#importControlLabel").val() ]
+						values: this.importSelectedFiles || [ $form.find(".jsImportRepoInput").val().trim() ]
 					};
 					this.importSelectedFiles = undefined;
 					var list = Bridge.import_packages(JSON.stringify(data));

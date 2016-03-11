@@ -113,6 +113,12 @@ body {
     margin-top: 10px;
 }
 
+.file_chooser_count_container {
+    display: inline-block;
+    margin: 5px 0px 0px 15px;
+    border-bottom: dashed 1px black;
+}
+
 .alert {
     display:none;
 }
