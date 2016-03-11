@@ -7,7 +7,6 @@ from handsome import full_project_info
 from settings_keeper import load_settings, save_settings
 from translation import yandex_translate
 
-
 # noinspection PyArgumentList
 class Browser(QWebView):
     def __init__(self):
