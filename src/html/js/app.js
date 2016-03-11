@@ -10,8 +10,8 @@ $(function() {
 		init: function() {
 			this.reloadPackagesList();
 			
-			$(".jsOpenSettings").on('click', this.openSettingsPage.bind(this));
-			$(".jsOpenImportPackages").on('click', this.openImportPage.bind(this));
+			$(".jsOpenSettingsMenuItem").on('click', this.openSettingsMenuItemClicked.bind(this));
+			$(".jsOpenImportPackagesMenuItem").on('click', this.openImportPageMenuItemClicked.bind(this));
 		},
 		
 		reloadPackagesList: function() {
@@ -31,10 +31,10 @@ $(function() {
 			var rendered = Mustache.render(template, obj);
 			$('#packages_list_container').html(rendered);
 			
-			$(".jsPackagesListItem").on('click', this.displayPackage.bind(this));
+			$(".jsPackagesListItem").on('click', this.packagesListItemClicked.bind(this));
 		},
 		
-		displayPackage: function(event) {
+		packagesListItemClicked: function(event) {
 			this.clearCurrentLocation();
 			if ($(event.target).data("id")) {
 				var id = $(event.target).data("id");
@@ -45,17 +45,17 @@ $(function() {
 				$(event.target.parentElement).addClass("active");
 			}
 
-			this.renderPackage(id);
+			this.displayPackage(id);
 		},
 
-        renderPackage: function(package_id) {
+        displayPackage: function(package_id) {
             var template = $('#packageTempl').html();
 			Mustache.parse(template);
 			var rendered = Mustache.render(template, this.getPackageByProjectId(package_id));
 			$('#workplace_container').html(rendered);
 
-            $(".jsTranslateField").on('click', this.translateFieldButtonClicked.bind(this));
-			$(".jsCancelPackageChangesButton").on('click', {id: package_id}, this.cancelPackageChanges.bind(this));
+            $(".jsTranslateFieldButton").on('click', this.translateFieldButtonClicked.bind(this));
+			$(".jsCancelPackageChangesButton").on('click', {id: package_id}, this.cancelPackageChangesButtonClicked.bind(this));
 			$(".jsSaveTranslationsButton").on('click', this.saveTranslationsButtonClicked.bind(this));
 			$(".jsCommitPackagePatchButton").on('click', this.commitPackagePatchButtonClicked.bind(this));
         },
@@ -111,7 +111,7 @@ $(function() {
             }
         },
 
-		cancelPackageChanges: function(event) {
+		cancelPackageChangesButtonClicked: function(event) {
             event.preventDefault();
             var id = event.data.id;
             var self = this;
@@ -129,7 +129,7 @@ $(function() {
                         "Продолжить": {
                                 className: "btn-warning",
                                 callback: function() {
-                                    self.renderPackage(id);
+                                    self.displayPackage(id);
                                 }
                         },
                 }
@@ -293,7 +293,7 @@ $(function() {
 			$(".jsPackagesListItem").removeClass("active");
 		},
 		
-		openSettingsPage: function(event) {
+		openSettingsMenuItemClicked: function(event) {
 			var hasError = false;
 			try {
 				if (!this.useStubs) {
@@ -330,9 +330,9 @@ $(function() {
 			$(".variablesForTranslateContainer").tooltip();
 			$(".variablesForTranslate").tokenfield();
 			
-			$(".jsDeleteBranch").on('click', this.deleteBrunch.bind(this));
-			$(".jsAddBrunchButton").on('click', this.addBrunch.bind(this));
-			$(".jsSaveSettingsButton").on('click', this.saveSettings.bind(this));
+			$(".jsDeleteBranchButton").on('click', this.deleteBrunchButtonClicked.bind(this));
+			$(".jsAddBrunchButton").on('click', this.addBrunchButtonClicked.bind(this));
+			$(".jsSaveSettingsButton").on('click', this.saveSettingsButtonClicked.bind(this));
 			$(".jsAddBrunchField").on('focus blur', this.hideBrunchErrors.bind(this));
 			
 			$form = $(".settingsForm");
@@ -343,7 +343,7 @@ $(function() {
 			$(".jsAddBrunchField").on('focus blur', this.hideSettingsInfoContainer.bind(this));
 		},
 		
-		deleteBrunch: function(event) {
+		deleteBrunchButtonClicked: function(event) {
 			event.preventDefault();
 			if ($(".branchesRadios").children().size() > 1) {
 				var $el = $(event.target).closest("button").parent();
@@ -361,7 +361,7 @@ $(function() {
 			}
 		},
 		
-		addBrunch: function(event) {
+		addBrunchButtonClicked: function(event) {
 			event.preventDefault();
 			var text = $(".jsAddBrunchField").val().trim();
 			var $er = $(".errorAddBrunchContainer");
@@ -384,10 +384,10 @@ $(function() {
 												'	<label>'+
 												'		<input type="radio" name="currentBranch" value="'+ text +'"'+ check +'>'+ text +
 												'	</label>'+
-												'	<button type="button" class="close delete_branch jsDeleteBranch" aria-label="Remove"><span aria-hidden="true">&times;</span></button>'+
+												'	<button type="button" class="close delete_branch jsDeleteBranchButton" aria-label="Remove"><span aria-hidden="true">&times;</span></button>'+
 												'</div>');
-					$(".jsDeleteBranch").off('click');
-					$(".jsDeleteBranch").on('click', this.deleteBrunch.bind(this));
+					$(".jsDeleteBranchButton").off('click');
+					$(".jsDeleteBranchButton").on('click', this.deleteBrunchButtonClicked.bind(this));
 				} else {
 					$erText.html("<strong>Такая ветка уже добавлена!</strong>")
 					$er.show();
@@ -398,7 +398,7 @@ $(function() {
 			}
 		},
 	
-		saveSettings: function(event) {
+		saveSettingsButtonClicked: function(event) {
 			event.preventDefault();
 			$form = $(".settingsForm");
 			
@@ -497,7 +497,7 @@ $(function() {
 			$(".successSettingsContainer").hide();
 		},
 		
-		openImportPage: function(event) {
+		openImportPageMenuItemClicked: function(event) {
 			var template = $('#importPackagesTempl').html();
 			Mustache.parse(template); 
 			var rendered = Mustache.render(template, App.settings);
@@ -505,16 +505,16 @@ $(function() {
 			App.clearCurrentLocation();
 			$(event.target).parent().addClass("active");
 			
-			$(".jsOpenFilesButton").on('click', {mode: 1}, this.openFileChooser.bind(this));
-			$("input[type=radio][name=importType]").on('change', this.changeImportType.bind(this));
+			$(".jsOpenFilesButton").on('click', {mode: 1}, this.openFileChooserButtonClicked.bind(this));
+			$("input[type=radio][name=importType]").on('change', this.changeImportTypeRadioClicked.bind(this));
             this.initPopoverForImportHelp();
-            $(".jsShowImportCustomTypeHelp").on('click', function() {
-                $(".jsShowImportCustomTypeHelp").popover('show');
+            $(".jsShowImportCustomTypeHelpButton").on('click', function() {
+                $(".jsShowImportCustomTypeHelpButton").popover('show');
             });
-			$(".jsImportPackagesButton").on('click', this.importPackages.bind(this));		
+			$(".jsImportPackagesButton").on('click', this.importPackagesButtonClicked.bind(this));
 		},
 		
-		openFileChooser: function(event) {
+		openFileChooserButtonClicked: function(event) {
             this.hideImportInfoContainer();
 			event.preventDefault();
 			console.log("openFileChooser, mode: "+event.data.mode);
@@ -530,7 +530,7 @@ $(function() {
 			console.log(this.importSelectedFiles);
 		},
 		
-		changeImportType: function(event) {
+		changeImportTypeRadioClicked: function(event) {
             this.hideImportInfoContainer();
 			var mode = 0;
 			var type = $(event.target).val();
@@ -552,7 +552,7 @@ $(function() {
             this.reloadImportControls();
 
 			if (type == 'files' || type == 'dir' || type == 'custom') {
-				$(".jsOpenFilesButton").on('click', {mode: mode}, this.openFileChooser.bind(this));
+				$(".jsOpenFilesButton").on('click', {mode: mode}, this.openFileChooserButtonClicked.bind(this));
 			} else {
                 $(".jsImportRepoInput").on('input', this.reloadImportControls.bind(this));
             }
@@ -562,19 +562,21 @@ $(function() {
             if (this.importSelectedFiles && this.importSelectedFiles.length) {
                 $(".jsFileChooserCount").html(this.importSelectedFiles.length);
             }
+            var $importRepoInput = $(".jsImportRepoInput");
+            var $importPackagesButton = $(".jsImportPackagesButton");
             if ((this.importSelectedFiles && this.importSelectedFiles.length > 0) ||
-                ($(".jsImportRepoInput") && $(".jsImportRepoInput").val() && $(".jsImportRepoInput").val().trim().length > 0)) {
-                if ($(".jsImportPackagesButton").hasClass("disabled")) {
-                    $(".jsImportPackagesButton").removeClass("disabled");
+                ($importRepoInput && $importRepoInput.val() && $importRepoInput.val().trim().length > 0)) {
+                if ($importPackagesButton.hasClass("disabled")) {
+                    $importPackagesButton.removeClass("disabled");
                 }
             } else {
-                if (!($(".jsImportPackagesButton").hasClass("disabled"))) {
-                    $(".jsImportPackagesButton").addClass("disabled");
+                if (!($importPackagesButton.hasClass("disabled"))) {
+                    $importPackagesButton.addClass("disabled");
                 }
             }
         },
 	
-		importPackages: function(event) {
+		importPackagesButtonClicked: function(event) {
             this.hideImportInfoContainer();
 			event.preventDefault();
 			try {
@@ -630,7 +632,7 @@ $(function() {
 
         initPopoverForImportHelp: function() {
             $('.popover').remove();
-            $(".jsShowImportCustomTypeHelp").popover({
+            $(".jsShowImportCustomTypeHelpButton").popover({
                 placement: "right auto",
                 trigger: "manual",
                 html: true,
@@ -643,8 +645,9 @@ $(function() {
             });
             $(window).off('resize');
             $(window).on('resize', function() {
-                if($('.jsShowImportCustomTypeHelp').data('bs.popover').tip().hasClass('in') == true) {
-                    $(".jsShowImportCustomTypeHelp").popover('show');
+                var $showImportCustomHelpButton = $('.jsShowImportCustomTypeHelpButton');
+                if($showImportCustomHelpButton.data('bs.popover').tip().hasClass('in') == true) {
+                    $showImportCustomHelpButton.popover('show');
                 }
             });
             $('body').on('click', function (e) {

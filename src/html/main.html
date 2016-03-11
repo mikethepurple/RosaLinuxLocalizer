@@ -15,8 +15,8 @@
   <nav class="navbar navbar-default navbar-fixed-top">
 	<div class="collapse navbar-collapse">
 		<ul class="nav navbar-nav">
-			<li><a href="#" class="jsOpenImportPackages">Импорт пакетов</a></li>
-			<li><a href="#" class="jsOpenSettings">Настройки</a></li>
+			<li><a href="#" class="jsOpenImportPackagesMenuItem">Импорт пакетов</a></li>
+			<li><a href="#" class="jsOpenSettingsMenuItem">Настройки</a></li>
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Команды <span class="caret"></span></a>
 				<ul class="dropdown-menu">
@@ -116,7 +116,7 @@
                                     <label for="stringRu">
                                         <div class="">{{variable_name}} (ru):</div>
                                     </label>
-                                    <div class="btn btn-link pull-right jsTranslateField">Машинный перевод</div>
+                                    <div class="btn btn-link pull-right jsTranslateFieldButton">Машинный перевод</div>
                                     <textarea class="form-control" rows="3" id="stringRu">{{value.ru}}</textarea>
                                 </div>
                             </div>
@@ -182,7 +182,7 @@
 						<label>
 							<input type="radio" id="inputBrunches" name="currentBranch" value="{{name}}"{{#active}} checked{{/active}}>{{name}}
 						</label>
-						<button type="button" class="close delete_branch jsDeleteBranch" aria-label="Remove"><span aria-hidden="true">&times;</span></button>
+						<button type="button" class="close delete_branch jsDeleteBranchButton" aria-label="Remove"><span aria-hidden="true">&times;</span></button>
 					</div>
 				{{/branches}}
 			  </div>
@@ -237,7 +237,7 @@
 			  <div class="radio col-sm-6 col-sm-offset-6">
 				<label>
 					<input type="radio" id="custom" name="importType" value="custom">список директорий/репозиториев из текстового файла
-					(<a href="#" class="import_type_custom_help_link jsShowImportCustomTypeHelp" data-toggle="popover">что это?</a>)
+					(<a href="#" class="import_type_custom_help_link jsShowImportCustomTypeHelpButton" data-toggle="popover">что это?</a>)
 				</label>
 			  </div>
 		  </div>
