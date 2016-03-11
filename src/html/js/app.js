@@ -103,11 +103,11 @@ $(function() {
                     targetField.val(result.value);
                 } else {
                     console.log("error while translating text: " + result.error);
-                    this.showPackageErrorMessage(result.error);
+                    this.showPackageErrorMessage('<strong>' + result.error + '</strong>');
                 }
             } catch (e) {
                 console.log("error while translating text: " + e);
-                this.showPackageErrorMessage("Ошибка при попытке машинного перевода! Попробуйте еще раз.");
+                this.showPackageErrorMessage("<strong>Ошибка при попытке машинного перевода!</strong> Попробуйте еще раз.");
             }
         },
 
@@ -145,7 +145,7 @@ $(function() {
 
             p.desktop_files = translationDesktopFiles;
 
-            this.showPackageSuccessMessage("Изменения сохранены.");
+            this.showPackageSuccessMessage("<strong>Изменения сохранены.</strong>");
 		},
 
         getTranslationsFromDOM: function() {
@@ -178,13 +178,13 @@ $(function() {
         },
 
         showPackageErrorMessage: function(error) {
-            $(".errorPackageContainer").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
+            $(".errorPackageText").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
             $(".errorPackageContainer").show();
             $('.right_block').scrollTop(0);
         },
 
         showPackageSuccessMessage: function(text) {
-            $(".successPackageContainer").html('<span class="glyphicon glyphicon-ok"></span> ' + text);
+            $(".successPackageText").html('<span class="glyphicon glyphicon-ok"></span> ' + text);
             $(".successPackageContainer").show();
             $('.right_block').scrollTop(0);
         },
@@ -250,14 +250,14 @@ $(function() {
                     var result = {};//{error: "Error!"};
                 }
                 if(!(result.error && result.error.length > 0)) {
-                    this.showPackageSuccessMessage("Коммит выполнен.");
+                    this.showPackageSuccessMessage("<strong>Коммит выполнен.</strong>");
                 } else {
                     console.log("error while committing translations: " + result.error);
-                    this.showPackageErrorMessage(result.error);
+                    this.showPackageErrorMessage('<strong>' + result.error + '</strong>');
                 }
             } catch (e) {
                 console.log("error while committing translations: " + e);
-                this.showPackageErrorMessage("Ошибка при попытке коммита! Попробуйте еще раз.");
+                this.showPackageErrorMessage("<strong>Ошибка при попытке коммита!</strong> Попробуйте еще раз.");
             }
         },
 		
@@ -324,8 +324,7 @@ $(function() {
 			$(event.target).parent().addClass("active");
 			
 			if (hasError) {
-				$(".errorSettingsContainer").html("Ошибка при загрузке настроек!<br>Целостность файла конфигурации могла быть нарушена, при сохранении настроек конфигурация перезапишется.");
-				$(".errorSettingsContainer").show();
+                this.showSettingsErrorMessage("<strong>Ошибка при загрузке настроек!</strong> Целостность файла конфигурации могла быть нарушена, при сохранении настроек конфигурация перезапишется.");
 			}
 			
 			$(".variablesForTranslateContainer").tooltip();
@@ -357,9 +356,8 @@ $(function() {
 					$($(".branchesRadios").children()[0]).find("input[type=radio]").prop("checked", true);
 				}
 			} else {
-				var $er = $(".errorBrunchContainer");
-				$er.html("Должна оставаться хотя бы одна ветка!");
-				$er.show();
+				$(".errorBrunchText").html("<strong>Должна оставаться хотя бы одна ветка!</strong>");
+				$(".errorBrunchContainer").show();
 			}
 		},
 		
@@ -367,6 +365,7 @@ $(function() {
 			event.preventDefault();
 			var text = $(".jsAddBrunchField").val().trim();
 			var $er = $(".errorAddBrunchContainer");
+			var $erText = $(".errorAddBrunchText");
 			if (text.length > 0) {
 				var brunches = $($(".branchesRadios").children()).map(function() {
 					return $(this).find("input").val();
@@ -390,11 +389,11 @@ $(function() {
 					$(".jsDeleteBranch").off('click');
 					$(".jsDeleteBranch").on('click', this.deleteBrunch.bind(this));
 				} else {
-					$er.html("Такая ветка уже добавлена!")
+					$erText.html("<strong>Такая ветка уже добавлена!</strong>")
 					$er.show();
 				}
 			} else {
-				$er.html("Поле не должно быть пустым!")
+				$erText.html("<strong>Поле не должно быть пустым!</strong>")
 				$er.show();
 			}
 		},
@@ -447,32 +446,32 @@ $(function() {
 									try {
                                         var result = JSON.parse(Bridge.save_settings(JSON.stringify(data)));
 										if(!(result.error && result.error.length > 0)) {
-                                            this.showSettingsSuccessMessage("Настройки сохранены.");
+                                            this.showSettingsSuccessMessage("<strong>Настройки сохранены.</strong>");
                                         } else {
                                             console.log("error while saving settings: " + result.error);
-                                            this.showSettingsErrorMessage(result.error);
+                                            this.showSettingsErrorMessage("<strong>" + result.error + "</strong>");
                                         }
 									} catch (e) {
 										console.log("error while saving settings: " + e);
-										this.showSettingsErrorMessage("Ошибка при сохранении настроек! Попробуйте еще раз.");
+										this.showSettingsErrorMessage("<strong>Ошибка при сохранении настроек!</strong> Попробуйте еще раз.");
 									}
 								} else {
-									this.showSettingsErrorMessage("Ошибка при сохранении настроек!<br>Добавьте хотя бы одну ветку.");
+									this.showSettingsErrorMessage("<strong>Ошибка при сохранении настроек!</strong> Добавьте хотя бы одну ветку.");
 								}
 							} else {
-								this.showSettingsErrorMessage("Ошибка при сохранении настроек!<br>Добавьте хотя бы одну переменную для локализации.");
+								this.showSettingsErrorMessage("<strong>Ошибка при сохранении настроек!</strong> Добавьте хотя бы одну переменную для локализации.");
 							}
 						} else {
-							this.showSettingsErrorMessage("Ошибка при сохранении настроек!<br>Введите пароль.");
+							this.showSettingsErrorMessage("<strong>Ошибка при сохранении настроек!</strong> Введите пароль.");
 						}
 					} else {
-						this.showSettingsErrorMessage("Ошибка при сохранении настроек!<br>Введите логин.");
+						this.showSettingsErrorMessage("<strong>Ошибка при сохранении настроек!</strong> Введите логин.");
 					}
 				} else {
-					this.showSettingsErrorMessage("Ошибка при сохранении настроек!<br>Введите группу проектов.");
+					this.showSettingsErrorMessage("<strong>Ошибка при сохранении настроек!</strong> Введите группу проектов.");
 				}
 			} else {
-				this.showSettingsErrorMessage("Ошибка при сохранении настроек!<br>Введите API ключ.");
+				this.showSettingsErrorMessage("<strong>Ошибка при сохранении настроек!</strong> Введите API ключ.");
 			}
 		},
 		
@@ -482,13 +481,13 @@ $(function() {
 		},
 
         showSettingsErrorMessage: function(error) {
-            $(".errorSettingsContainer").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
+            $(".errorSettingsText").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
             $(".errorSettingsContainer").show();
             $('.right_block').scrollTop(0);
         },
         
         showSettingsSuccessMessage: function(text) {
-            $(".successSettingsContainer").html('<span class="glyphicon glyphicon-saved"></span> ' + text);
+            $(".successSettingsText").html('<span class="glyphicon glyphicon-saved"></span> ' + text);
             $(".successSettingsContainer").show();
             $('.right_block').scrollTop(0);
         },
@@ -523,7 +522,7 @@ $(function() {
                 this.importSelectedFiles = Bridge.open_files(event.data.mode);//изначально выбран mode = 1
             } catch (e) {
                 console.log("error while open files: " + e);
-				this.showImportErrorMessage("Ошибка при выборе файлов! Попробуйте еще раз.");
+				this.showImportErrorMessage("<strong>Ошибка при выборе файлов!</strong> Попробуйте еще раз.");
                 this.importSelectedFiles = undefined;
             }
 			console.log(this.importSelectedFiles);
@@ -573,7 +572,7 @@ $(function() {
 				var json_list = JSON.parse(list);
 				if (json_list.error && json_list.error.length > 0) {
 					console.log("error while importing packages: " + json_list.error);
-					this.showImportErrorMessage(json_list.error);
+					this.showImportErrorMessage('<strong>' + json_list.error + '</strong>');
 				} 
 				
 				if (json_list.packages) {
@@ -581,22 +580,22 @@ $(function() {
 					console.log(App.packages.length + " packages loaded:\n" + JSON.stringify(App.packages));
 					App.reloadPackagesList();
 
-                    this.showImportSuccessMessage("Импорт успешно завершен! Импортировано пакетов: " + App.packages.length);
+                    this.showImportSuccessMessage("<strong>Импорт успешно завершен!</strong> Импортировано пакетов: " + App.packages.length);
 				}
 			} catch (e) {
 				console.log("error while importing packages: " + e);
-				this.showImportErrorMessage("Ошибка при импорте пакетов! Проверьте целостность данных и попробуйте еще раз.");
+				this.showImportErrorMessage("<strong>Ошибка при импорте пакетов!</strong> Проверьте целостность данных и попробуйте еще раз.");
 			}
 		},
 
         showImportErrorMessage: function(error) {
-            $(".errorImportContainer").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
+            $(".errorImportText").html('<span class="glyphicon glyphicon-alert"></span> ' + error);
             $(".errorImportContainer").show();
             $('.right_block').scrollTop(0);
         },
 
         showImportSuccessMessage: function(text) {
-            $(".successImportContainer").html('<span class="glyphicon glyphicon-ok"></span> ' + text);
+            $(".successImportText").html('<span class="glyphicon glyphicon-ok"></span> ' + text);
             $(".successImportContainer").show();
             $('.right_block').scrollTop(0);
         },
