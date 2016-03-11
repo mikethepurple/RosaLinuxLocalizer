@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 from PyQt4.QtGui import QApplication, QFileDialog
 from PyQt4.QtCore import QUrl, QObject, pyqtSlot
@@ -6,6 +7,7 @@ from PyQt4.QtWebKit import QWebView, QWebInspector, QWebSettings
 from handsome import full_project_info
 from settings_keeper import load_settings, save_settings
 from translation import yandex_translate
+
 
 # noinspection PyArgumentList
 class Browser(QWebView):
@@ -20,7 +22,7 @@ class Browser(QWebView):
     @pyqtSlot(str, result=str)
     def get_translation(self, text):
         yandex_api_key = "trnsl.1.1.20160131T164826Z.1cd5efb8cc6af7a6.0d34545e70be2a8bdd261d6cf743ae3df1429d13"
-        return {"values": yandex_translate(yandex_api_key, "en-ru", text)}
+        return json.dumps({"value": yandex_translate(yandex_api_key, "en-ru", text)})
 
     @pyqtSlot(str, result=str)
     def import_packages(self, json_data):
@@ -29,7 +31,12 @@ class Browser(QWebView):
             values = data["values"]
             print(values)
             print(type(values))
-            return json.dumps([full_project_info("import", f, ["Name", "Comment"]) for f in values])
+            return json.dumps({"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in values]})
+        elif data["type"] == "dir":
+            values = data["values"]["packages"]
+            return json.dumps(
+                {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in os.listdir(values) if
+                              ".rpm" in f]})
 
     @pyqtSlot(result=str)
     def get_settings(self):
@@ -50,7 +57,8 @@ class Browser(QWebView):
             v = a.getOpenFileNames(caption="Импорт файлов rpm...", filter="RPM Files (*.rpm);;Any files (*.*)")
             return json.dumps(v)
         elif mode == 2:
-            return a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)
+            directory = a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)
+            return json.dumps({"packages": directory})
         elif mode == 3:
             return a.getOpenFileName()
 
