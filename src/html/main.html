@@ -20,23 +20,22 @@
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Команды <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li class="dropdown-submenu disabled">
+					<li class="dropdown-submenu jsActivePackageCommandsMenuItem disabled">
                         <a tabindex="-1" href="#">Текущий пакет</a>
                         <ul class="dropdown-menu">
-							<li><a href="#">Добавить недостающие переводы</a></li>
-							<li><a href="#">Коммит патча</a></li>
-							<li><a href="#">Скрыть</a></li>
+							<li class="jsActivePackageAddMissedTranslatesMenuItem"><a href="#">Добавить недостающие переводы</a></li>
+							<li class="jsActivePackageCommitPatchMenuItem"><a href="#">Коммит патча</a></li>
+							<li class="jsActivePackageHideMenuItem"><a href="#">Скрыть</a></li>
 						</ul>
                     </li>
-                    <li class="dropdown-submenu disabled">
+                    <li class="dropdown-submenu jsAllPackagesCommandsMenuItem disabled">
                         <a tabindex="-1" href="#">Все пакеты</a>
                         <ul class="dropdown-menu">
-							<li><a href="#">Добавить недостающие переводы</a></li>
+							<li class="jsAllPackagesAddMissedTranslatesMenuItem"><a href="#">Добавить недостающие переводы</a></li>
 							<li class="disabled"><a href="#">Коммит всех патчей</a></li>
-							<li><a href="#">Скрыть локализированные</a></li>
+							<li class="disabled"><a href="#">Скрыть локализированные</a></li>
 						</ul>
                     </li>
-					<li role="separator" class="divider"></li>
 				</ul>
 			</li>
 		</ul>

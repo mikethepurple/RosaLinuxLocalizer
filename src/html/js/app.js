@@ -12,11 +12,19 @@ $(function() {
 			
 			$(".jsOpenSettingsMenuItem").on('click', this.openSettingsMenuItemClicked.bind(this));
 			$(".jsOpenImportPackagesMenuItem").on('click', this.openImportPageMenuItemClicked.bind(this));
+
+            var $allPackagesAddMissedTranslatesMenuItem = $(".jsAllPackagesAddMissedTranslatesMenuItem");
+            $allPackagesAddMissedTranslatesMenuItem.on('click', this.addAllPackagesMissedTranslatesMenuItemClicked.bind(this));
 		},
 
         clearCurrentLocation: function() {
 			$(".nav li").removeClass("active");
 			$(".jsPackagesListItem").removeClass("active");
+
+            var $activePackageCommandsMenuItem = $(".jsActivePackageCommandsMenuItem");
+            if (!$activePackageCommandsMenuItem.hasClass("disabled")) {
+                $activePackageCommandsMenuItem.addClass("disabled");
+            }
 		},
 
 
@@ -324,6 +332,8 @@ $(function() {
 				$(event.target.parentElement).addClass("active");
 			}
 
+            $(".jsActivePackageCommandsMenuItem").removeClass("disabled");
+
 			this.displayPackage(id);
 		},
 
@@ -358,6 +368,56 @@ $(function() {
                 this.translateField(targetField, textEn);
 			}
 		},
+
+        addActivePackageMissedTranslatesMenuItemClicked: function(event) {
+            var id = event.data.id;
+            var p = this.getPackageByProjectId(id);
+
+            this.addMissedTranslations(p);
+
+            p.status = 4; //т.к. после заполнения всех пустых полей пакет становится локализированным
+            this.reloadPackagesList(id);
+            this.displayPackage(id);
+        },
+
+        addAllPackagesMissedTranslatesMenuItemClicked: function(event) {
+            var self = this;
+            $.each(this.packages, function (index, p) {
+                if (p.status === 2 || p.status == 3 || (p.status === 4 && self.checkEmptyStrings(p.desktop_files))) {
+                    p.status = 4;
+                }
+                self.addMissedTranslations(p);
+            });
+            this.reloadPackagesList();
+        },
+
+        hideActivePackageMenuItemClicked: function(event) {
+            var id = event.data.id;
+            var self = this;
+            bootbox.dialog({
+                message: "Скрытие пакета удалит его из списка.",
+                title: "Скрыть пакет?",
+                onEscape: function() {},
+                show: true,
+                backdrop: true,
+                closeButton: true,
+                animate: true,
+                className: "confirm-hide-package-text",
+                buttons: {
+                    "Отменить": function() {},
+                    "<span class=\"glyphicon glyphicon-remove\"></span> Скрыть": {
+                        className: "btn-danger",
+                        callback: function() {
+                            self.packages = $.grep(self.packages, function(p){
+                                 return p.project_id != id;
+                            });
+                            self.clearCurrentLocation();
+                            self.reloadPackagesList();
+                        }
+                    }
+                }
+            });
+        },
 
         cancelPackageChangesButtonClicked: function(event) {
             event.preventDefault();
@@ -404,6 +464,8 @@ $(function() {
                 this.reloadPackagesList(p.project_id);
             }
 
+            this.reloadActivePackageMenu(p);
+
             this.showPackageSuccessMessage("<strong>Изменения сохранены.</strong>");
 		},
 
@@ -435,7 +497,7 @@ $(function() {
 									}
 							},
 					}
-					});
+                });
             } else {
                 var p = this.getPackageByProjectId($(".jsPackageName").data("project-id"));
                 console.log(translationDesktopFiles);
@@ -500,6 +562,15 @@ $(function() {
 			var rendered = Mustache.render(template, obj);
 			$('#packages_list_container').html(rendered);
 
+            var $allPackagesCommandsMenuItem = $(".jsAllPackagesCommandsMenuItem")
+            if (this.packages && this.packages.length > 0) {
+                $allPackagesCommandsMenuItem.removeClass("disabled");
+            } else {
+                if (!$allPackagesCommandsMenuItem.hasClass("disabled")) {
+                    $allPackagesCommandsMenuItem.addClass("disabled");
+                }
+            }
+
             if (active_project_id) {
                 $('#packages_list_container').find("[data-id=" + active_project_id + "]").addClass("active");
             }
@@ -507,16 +578,38 @@ $(function() {
 			$(".jsPackagesListItem").on('click', this.packagesListItemClicked.bind(this));
 		},
 
-        displayPackage: function(package_id) {
+        displayPackage: function(project_id) {
+            var p = this.getPackageByProjectId(project_id);
+
             var template = $('#packageTempl').html();
 			Mustache.parse(template);
-			var rendered = Mustache.render(template, this.getPackageByProjectId(package_id));
+			var rendered = Mustache.render(template, p);
 			$('#workplace_container').html(rendered);
 
             $(".jsTranslateFieldButton").on('click', this.translateFieldButtonClicked.bind(this));
-			$(".jsCancelPackageChangesButton").on('click', {id: package_id}, this.cancelPackageChangesButtonClicked.bind(this));
+			$(".jsCancelPackageChangesButton").on('click', {id: project_id}, this.cancelPackageChangesButtonClicked.bind(this));
 			$(".jsSaveTranslationsButton").on('click', this.saveTranslationsButtonClicked.bind(this));
 			$(".jsCommitPackagePatchButton").on('click', this.commitPackagePatchButtonClicked.bind(this));
+            this.reloadActivePackageMenu(p);
+        },
+
+        reloadActivePackageMenu: function(active_project) {
+            var $addTranslatesMenuItem = $(".jsActivePackageAddMissedTranslatesMenuItem");
+            if (this.checkEmptyStrings(active_project.desktop_files)) {
+                $addTranslatesMenuItem.removeClass("disabled");
+            } else {
+                if (!$addTranslatesMenuItem.hasClass("disabled")) {
+                    $addTranslatesMenuItem.addClass("disabled");
+                }
+            }
+            $addTranslatesMenuItem.off('click');
+            $addTranslatesMenuItem.on('click', {id: active_project.project_id}, this.addActivePackageMissedTranslatesMenuItemClicked.bind(this));
+            var $activePackageCommitPatchMenuItem = $(".jsActivePackageCommitPatchMenuItem");
+            $activePackageCommitPatchMenuItem.off('click');
+            $activePackageCommitPatchMenuItem.on('click', this.commitPackagePatchButtonClicked.bind(this));
+            var $activePackageHideMenuItem = $(".jsActivePackageHideMenuItem");
+            $activePackageHideMenuItem.off('click');
+            $activePackageHideMenuItem.on('click', {id: active_project.project_id}, this.hideActivePackageMenuItemClicked.bind(this));
         },
 
         translateField: function(targetField, text) {
@@ -580,6 +673,30 @@ $(function() {
 			return res;
 		},
 
+        addMissedTranslations: function(projectObj) {
+            var self = this;
+            $.each(projectObj.desktop_files, function (f_index, file) {
+                $.each(file.strings, function (s_index, str) {
+                    if (str.value && str.value.en && (!str.value.ru || str.value.ru.trim().length === 0)) {
+                        try {
+                            if (!self.useStubs) {
+                                var result = JSON.parse(Bridge.get_translation(str.value.en));
+                            } else {
+                                var result = {value:"Переведенный текст."};//{error: "Error!"};//
+                            }
+                            if(!(result.error && result.error.length > 0)) {
+                                str.value.ru = result.value;
+                            } else {
+                                console.log("error while translating text: " + result.error);
+                            }
+                        } catch (e) {
+                            console.log("error while translating text: " + e);
+                        }
+                    }
+                });
+            });
+        },
+
         checkEmptyStrings: function(desktop_files) {
             var res = false;
             $.each(desktop_files, function( index, f ) {
@@ -633,6 +750,7 @@ $(function() {
                     this.showPackageSuccessMessage("<strong>Коммит выполнен.</strong>");
                     packageObj.status = 5;
                     this.reloadPackagesList(packageObj.project_id);
+                    this.reloadActivePackageMenu(packageObj);
                 } else {
                     console.log("error while committing translations: " + result.error);
                     this.showPackageErrorMessage('<strong>' + result.error + '</strong>');
