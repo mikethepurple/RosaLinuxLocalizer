@@ -15,6 +15,7 @@ $(function() {
 
             $(".jsAllPackagesAddMissedTranslatesMenuItem").on('click', this.addAllPackagesMissedTranslatesMenuItemClicked.bind(this));
             $(".jsAllPackagesCommitPatchesMenuItem").on('click', this.allPackagesCommitPatchesMenuItemClicked.bind(this));
+            $(".jsAllPackagesHideLocalizedMenuItem").on('click', this.allPackagesHideLocalizedMenuItemClicked.bind(this));
 		},
 
         clearCurrentLocation: function() {
@@ -529,6 +530,33 @@ $(function() {
                                     self.commitAllPackagesPatches(active_package);
                                 }
                         },
+                }
+            });
+        },
+
+        allPackagesHideLocalizedMenuItemClicked: function(event) {
+            var self = this;
+            bootbox.dialog({
+                message: "Скрытие удалит из списка пакеты со статусом \"Коммит патча выполнен\".",
+                title: "Скрыть локализированные пакеты?",
+                onEscape: function() {},
+                show: true,
+                backdrop: true,
+                closeButton: true,
+                animate: true,
+                className: "confirm-hide-packages-text",
+                buttons: {
+                        "Отменить": function() {},
+                        "<span class=\"glyphicon glyphicon-remove\"></span> Скрыть": {
+                        className: "btn-danger",
+                        callback: function() {
+                            self.packages = $.grep(self.packages, function(p){
+                                 return p.status != 5;
+                            });
+                            self.clearCurrentLocation();
+                            self.reloadPackagesList();
+                        }
+                    }
                 }
             });
         },
