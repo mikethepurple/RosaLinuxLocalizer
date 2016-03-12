@@ -13,8 +13,8 @@ $(function() {
 			$(".jsOpenSettingsMenuItem").on('click', this.openSettingsMenuItemClicked.bind(this));
 			$(".jsOpenImportPackagesMenuItem").on('click', this.openImportPageMenuItemClicked.bind(this));
 
-            var $allPackagesAddMissedTranslatesMenuItem = $(".jsAllPackagesAddMissedTranslatesMenuItem");
-            $allPackagesAddMissedTranslatesMenuItem.on('click', this.addAllPackagesMissedTranslatesMenuItemClicked.bind(this));
+            $(".jsAllPackagesAddMissedTranslatesMenuItem").on('click', this.addAllPackagesMissedTranslatesMenuItemClicked.bind(this));
+            $(".jsAllPackagesCommitPatchesMenuItem").on('click', this.allPackagesCommitPatchesMenuItemClicked.bind(this));
 		},
 
         clearCurrentLocation: function() {
@@ -506,6 +506,32 @@ $(function() {
             }
         },
 
+        allPackagesCommitPatchesMenuItemClicked:function(event) {
+            var self = this;
+            bootbox.dialog({
+                message: "Будут выполнены коммиты патчей для всех пакетов со статусом \"Локализирован, готов к коммиту\".",
+                title: "Выполнить коммиты патчей?",
+                onEscape: function() {},
+                show: true,
+                backdrop: true,
+                closeButton: true,
+                animate: true,
+                className: "confirm-commit-patch-text",
+                buttons: {
+                        "Отменить": function() {},
+                        "<span class=\"glyphicon glyphicon-floppy-disk\"></span> Выполнить коммиты патчей": {
+                                className: "btn-primary",
+                                callback: function() {
+                                    var active_package;
+                                    if ($(".jsPackageName") && $(".jsPackageName").data("project-id")) {
+                                        active_package = self.getPackageByProjectId($(".jsPackageName").data("project-id"))
+                                    }
+                                    self.commitAllPackagesPatches(active_package);
+                                }
+                        },
+                }
+            });
+        },
         /* ====   End of events   ==== */
 
 
@@ -542,7 +568,7 @@ $(function() {
 
         /* package */
 
-		reloadPackagesList: function(active_project_id) {
+		reloadPackagesList: function(active_package_id) {
 			var template = $('#packageListItemTempl').html();
 			Mustache.parse(template); 
 			var obj = {
@@ -571,8 +597,8 @@ $(function() {
                 }
             }
 
-            if (active_project_id) {
-                $('#packages_list_container').find("[data-id=" + active_project_id + "]").addClass("active");
+            if (active_package_id) {
+                $('#packages_list_container').find("[data-id=" + active_package_id + "]").addClass("active");
             }
 
 			$(".jsPackagesListItem").on('click', this.packagesListItemClicked.bind(this));
@@ -593,9 +619,9 @@ $(function() {
             this.reloadActivePackageMenu(p);
         },
 
-        reloadActivePackageMenu: function(active_project) {
+        reloadActivePackageMenu: function(active_package) {
             var $addTranslatesMenuItem = $(".jsActivePackageAddMissedTranslatesMenuItem");
-            if (this.checkEmptyStrings(active_project.desktop_files)) {
+            if (this.checkEmptyStrings(active_package.desktop_files)) {
                 $addTranslatesMenuItem.removeClass("disabled");
             } else {
                 if (!$addTranslatesMenuItem.hasClass("disabled")) {
@@ -603,13 +629,13 @@ $(function() {
                 }
             }
             $addTranslatesMenuItem.off('click');
-            $addTranslatesMenuItem.on('click', {id: active_project.project_id}, this.addActivePackageMissedTranslatesMenuItemClicked.bind(this));
+            $addTranslatesMenuItem.on('click', {id: active_package.project_id}, this.addActivePackageMissedTranslatesMenuItemClicked.bind(this));
             var $activePackageCommitPatchMenuItem = $(".jsActivePackageCommitPatchMenuItem");
             $activePackageCommitPatchMenuItem.off('click');
             $activePackageCommitPatchMenuItem.on('click', this.commitPackagePatchButtonClicked.bind(this));
             var $activePackageHideMenuItem = $(".jsActivePackageHideMenuItem");
             $activePackageHideMenuItem.off('click');
-            $activePackageHideMenuItem.on('click', {id: active_project.project_id}, this.hideActivePackageMenuItemClicked.bind(this));
+            $activePackageHideMenuItem.on('click', {id: active_package.project_id}, this.hideActivePackageMenuItemClicked.bind(this));
         },
 
         translateField: function(targetField, text) {
@@ -760,7 +786,46 @@ $(function() {
                 this.showPackageErrorMessage("<strong>Ошибка при попытке коммита!</strong> Попробуйте еще раз.");
             }
         },
-	
+
+        commitAllPackagesPatches: function(active_package) {
+            var success = 0;
+            var error = 0;
+            var self = this;
+            $.each(this.packages, function( index, packageObj ) {
+                if (packageObj.status === 4) {
+                    console.log("commit for " + packageObj.package_name);
+
+                    var data = {
+                        git: packageObj.git,
+                        desktop_files: packageObj.desktop_files
+                    };
+
+                    try {
+                        if (!self.useStubs) {
+                            var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
+                        } else {
+                            var result = {};//{error: "Error!"};
+                        }
+                        if(!(result.error && result.error.length > 0)) {
+                            success++;
+                            packageObj.status = 5;
+
+                        } else {
+                            console.log("error while committing translations: " + result.error);
+                            error++;
+                        }
+                    } catch (e) {
+                        console.log("error while committing translations: " + e);
+                        error++;
+                    }
+                }
+            });
+            this.reloadPackagesList((active_package) ? active_package.project_id : undefined);
+            if (active_package) {
+                this.reloadActivePackageMenu(active_package);
+            }
+        },
+
         /* ====   End of main functions   ==== */
 
 
