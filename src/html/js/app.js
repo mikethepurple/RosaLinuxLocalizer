@@ -478,7 +478,7 @@ $(function() {
 
         commitPackagePatchButtonClicked: function(event) {
             event.preventDefault();
-            if ($(event.target).hasClass("disabled")) {return false;}
+            if ($(event.target).hasClass("disabled") || $(event.target.parentNode).hasClass("disabled")) {return false;}
             var translationDesktopFiles = this.getTranslationsFromDOM();
             var hasEmptyStrings = this.checkEmptyStrings(translationDesktopFiles);
 
@@ -667,9 +667,18 @@ $(function() {
             }
             $addTranslatesMenuItem.off('click');
             $addTranslatesMenuItem.on('click', {id: active_package.project_id}, this.addActivePackageMissedTranslatesMenuItemClicked.bind(this));
+
             var $activePackageCommitPatchMenuItem = $(".jsActivePackageCommitPatchMenuItem");
+            if (active_package.desktop_files && active_package.desktop_files.length > 0) {
+                $activePackageCommitPatchMenuItem.removeClass("disabled");
+            } else {
+                if (!$activePackageCommitPatchMenuItem.hasClass("disabled")) {
+                    $activePackageCommitPatchMenuItem.addClass("disabled");
+                }
+            }
             $activePackageCommitPatchMenuItem.off('click');
             $activePackageCommitPatchMenuItem.on('click', this.commitPackagePatchButtonClicked.bind(this));
+
             var $activePackageHideMenuItem = $(".jsActivePackageHideMenuItem");
             $activePackageHideMenuItem.off('click');
             $activePackageHideMenuItem.on('click', {id: active_package.project_id}, this.hideActivePackageMenuItemClicked.bind(this));
