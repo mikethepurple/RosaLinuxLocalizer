@@ -36,6 +36,7 @@ $(function() {
         /* import */
 
         openImportPageMenuItemClicked: function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
 			var template = $('#importPackagesTempl').html();
 			Mustache.parse(template);
 			var rendered = Mustache.render(template, App.settings);
@@ -97,6 +98,7 @@ $(function() {
 		},
 
         importPackagesButtonClicked: function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
             this.hideImportMessageContainers();
 			event.preventDefault();
 			try {
@@ -139,6 +141,7 @@ $(function() {
         /* settings */
 
         openSettingsMenuItemClicked: function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
 			var hasError = false;
 			try {
 				if (!this.useStubs) {
@@ -245,6 +248,7 @@ $(function() {
 
 		saveSettingsButtonClicked: function(event) {
 			event.preventDefault();
+            if ($(event.target).hasClass("disabled")) {return false;}
 			$form = $(".settingsForm");
 
 			var data = {
@@ -323,6 +327,7 @@ $(function() {
         /* packages */
 
         packagesListItemClicked: function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
 			this.clearCurrentLocation();
 			if ($(event.target).data("id")) {
 				var id = $(event.target).data("id");
@@ -371,6 +376,7 @@ $(function() {
 		},
 
         addActivePackageMissedTranslatesMenuItemClicked: function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
             var id = event.data.id;
             var p = this.getPackageByProjectId(id);
 
@@ -382,6 +388,7 @@ $(function() {
         },
 
         addAllPackagesMissedTranslatesMenuItemClicked: function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
             var self = this;
             $.each(this.packages, function (index, p) {
                 if (p.status === 2 || p.status == 3 || (p.status === 4 && self.checkEmptyStrings(p.desktop_files))) {
@@ -393,6 +400,7 @@ $(function() {
         },
 
         hideActivePackageMenuItemClicked: function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
             var id = event.data.id;
             var self = this;
             bootbox.dialog({
@@ -422,6 +430,7 @@ $(function() {
 
         cancelPackageChangesButtonClicked: function(event) {
             event.preventDefault();
+            if ($(event.target).hasClass("disabled")) {return false;}
             var id = event.data.id;
             var self = this;
             bootbox.dialog({
@@ -447,6 +456,7 @@ $(function() {
 
         saveTranslationsButtonClicked: function(event) {
             event.preventDefault();
+            if ($(event.target).hasClass("disabled")) {return false;}
 			$form = $(".translationsForm");
 
             var translationDesktopFiles = this.getTranslationsFromDOM();
@@ -472,6 +482,7 @@ $(function() {
 
         commitPackagePatchButtonClicked: function(event) {
             event.preventDefault();
+            if ($(event.target).hasClass("disabled")) {return false;}
             var translationDesktopFiles = this.getTranslationsFromDOM();
             var hasEmptyStrings = this.checkEmptyStrings(translationDesktopFiles);
 
@@ -508,6 +519,7 @@ $(function() {
         },
 
         allPackagesCommitPatchesMenuItemClicked:function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
             var self = this;
             bootbox.dialog({
                 message: "Будут выполнены коммиты патчей для всех пакетов со статусом \"Локализирован, готов к коммиту\".",
@@ -535,6 +547,7 @@ $(function() {
         },
 
         allPackagesHideLocalizedMenuItemClicked: function(event) {
+            if ($(event.target).hasClass("disabled")) {return false;}
             var self = this;
             bootbox.dialog({
                 message: "Скрытие удалит из списка пакеты со статусом \"Коммит патча выполнен\".",
