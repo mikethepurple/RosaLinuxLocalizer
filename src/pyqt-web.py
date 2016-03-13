@@ -5,6 +5,7 @@ from PyQt4.QtGui import QApplication, QFileDialog
 from PyQt4.QtCore import QUrl, QObject, pyqtSlot
 from PyQt4.QtWebKit import QWebView, QWebInspector, QWebSettings
 from handsome import full_project_info
+from list_utils import from_file_with_list
 from settings_keeper import load_settings, save_settings
 from translation import yandex_translate
 
@@ -37,6 +38,9 @@ class Browser(QWebView):
             return json.dumps(
                 {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in os.listdir(values) if
                               ".rpm" in f]})
+        elif data["type"] == "custom":
+            with_list = from_file_with_list(data["value"])
+            return with_list
 
     @pyqtSlot(result=str)
     def get_settings(self):
@@ -60,7 +64,7 @@ class Browser(QWebView):
             directory = a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)
             return json.dumps({"packages": directory})
         elif mode == 3:
-            return a.getOpenFileName()
+            return json.dumps({"packages": a.getOpenFileName()})
 
 
 if __name__ == '__main__':

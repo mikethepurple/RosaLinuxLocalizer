@@ -19,6 +19,6 @@ def in_dir(path):
 def from_file_with_list(path):
     with open(path, 'r') as stream:
         try:
-            print(yaml.load(stream))
+            return {"packages": (yaml.load(stream))}
         except yaml.YAMLError as exc:
-            print(exc)
+            return {"error": exc}
