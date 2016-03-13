@@ -41,7 +41,7 @@ class Browser(QWebView):
         elif data["type"] == "custom":
             with_list = from_file_with_list(data["values"])
             return json.dumps(
-                {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in with_list["packages"] if
+                {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in with_list if
                               ".rpm" in f]})
 
     @pyqtSlot(result=str)

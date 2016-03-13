@@ -1,3 +1,5 @@
+import os
+
 import yaml
 from os import listdir
 from os.path import isfile, join
@@ -19,6 +21,11 @@ def in_dir(path):
 def from_file_with_list(path):
     with open(path, 'r') as stream:
         try:
-            return {"packages": (yaml.load(stream))}
+            loaded = yaml.load(stream)["places"]
+            files = [f["path"] for f in loaded if f["type"] == "file"]
+            directories = [f["path"] for f in loaded if f["type"] == "dir"]
+            files_in_directories = [file for directory in directories for file in os.listdir(directory) if
+                                    ".rpm" in file]
+            return files + files_in_directories
         except yaml.YAMLError as exc:
-            return {"error": exc}
+            return {"errors": exc}
