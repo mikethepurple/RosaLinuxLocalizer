@@ -34,13 +34,15 @@ class Browser(QWebView):
             print(type(values))
             return json.dumps({"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in values]})
         elif data["type"] == "dir":
-            values = data["values"]["packages"]
+            values = data["values"]
             return json.dumps(
                 {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in os.listdir(values) if
                               ".rpm" in f]})
         elif data["type"] == "custom":
-            with_list = from_file_with_list(data["value"])
-            return with_list
+            with_list = from_file_with_list(data["values"])
+            return json.dumps(
+                {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in with_list["packages"] if
+                              ".rpm" in f]})
 
     @pyqtSlot(result=str)
     def get_settings(self):
@@ -62,9 +64,9 @@ class Browser(QWebView):
             return json.dumps(v)
         elif mode == 2:
             directory = a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)
-            return json.dumps({"packages": directory})
+            return json.dumps(directory)
         elif mode == 3:
-            return json.dumps({"packages": a.getOpenFileName()})
+            return json.dumps(a.getOpenFileName())
 
 
 if __name__ == '__main__':
