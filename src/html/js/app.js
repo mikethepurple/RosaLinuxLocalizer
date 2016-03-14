@@ -2,7 +2,7 @@ $(function() {
     console.log("application start");
 
 	App = {
-		useStubs: false,
+		useStubs: true,
 		packages: [],
 		settings: {},
 		importSelectedFiles: undefined,
@@ -606,11 +606,12 @@ $(function() {
                             });
                             self.clearCurrentLocation();
 
-                            if (id && self.getPackageByProjectId(id)) {
-                                self.reloadPackagesList(id);
+                            if (id) { //один из пакетов был выбран
+                                if (self.getPackageByProjectId(id)) {//он еще существует
+                                    self.reloadPackagesList(id);
+                                }
                             } else {
                                 self.reloadPackagesList();
-                                $(".jsOpenImportPackagesMenuItem").click();
                             }
                         }
                     }
