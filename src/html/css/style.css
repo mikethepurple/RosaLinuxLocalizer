@@ -1,0 +1,134 @@
+@media (min-width: 450px){
+  .left_block {
+    position: absolute;
+	z-index: 2;
+    top: 50px;
+    bottom: 0px;
+    left: 0;
+    width: 350px;
+  }
+
+  .right_block {
+	position: absolute;
+	z-index: 1;
+    top: 50px;
+    bottom: 0;
+    overflow-y: auto;
+  }
+}
+
+body {
+    padding-top: 0px;
+}
+
+.dropdown-submenu{position:relative;}
+.dropdown-submenu>.dropdown-menu{top:0;left:100%;margin-top:-6px;margin-left:-1px;-webkit-border-radius:0 6px 6px 6px;-moz-border-radius:0 6px 6px 6px;border-radius:0 6px 6px 6px;}
+.dropdown-submenu:not(.disabled):hover>.dropdown-menu{display:block;}
+.dropdown-submenu>a:after{display:block;content:" ";float:right;width:0;height:0;border-color:transparent;border-style:solid;border-width:5px 0 5px 5px;border-left-color:#cccccc;margin-top:5px;margin-right:-10px;}
+.dropdown-submenu:hover>a:after{border-left-color:#ffffff;}
+.dropdown-submenu.pull-left{float:none;}.dropdown-submenu.pull-left>.dropdown-menu{left:-100%;margin-left:10px;-webkit-border-radius:6px 0 6px 6px;-moz-border-radius:6px 0 6px 6px;border-radius:6px 0 6px 6px;}
+
+.main_container {
+    margin: 0px;
+}
+
+.left_block {
+	height: auto;
+}
+
+.left_block_internal {
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px 30px 0px 30px;
+    background-color: #e6e6e6;
+}
+
+.right_block {
+	width: 100%;
+}
+
+.right_block_internal {
+	margin-left: 350px;
+	padding: 20px 20px 70px 20px;
+}
+
+
+.package_title {
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 30px;
+}
+
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}
+
+.file_chooser_label {
+	margin-top: 10px;
+}
+
+.file_chooser_button {
+	max-width: 280px;
+}
+
+.not_imported_packages {
+	margin-top: 20px;
+}
+
+.settings_title {
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 30px;
+}
+
+.no_desktop_files {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.delete_branch {
+	display: inline-block;
+	float: none;
+}
+
+.add_brunch_form_group {
+	width: 340px;
+}
+
+.import_type_custom_help_link {
+    border-bottom: dashed 1px #337ab7;
+    text-decoration: none;
+}
+
+.import_type_custom_help_link:hover {
+    border-bottom: solid 1px #23527c;
+    text-decoration: none;
+}
+
+.popover{
+    max-width: 400px;
+}
+
+.yaml_template {
+    margin-top: 10px;
+}
+
+.file_chooser_count_container {
+    display: inline-block;
+    margin: 5px 0px 0px 15px;
+    border-bottom: dashed 1px black;
+}
+
+.alert {
+    display:none;
+}
+
+
+
+
+
+
+
+
+
+

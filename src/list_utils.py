@@ -1,4 +1,3 @@
-import yaml
 from os import listdir
 from os.path import isfile, join
 
@@ -14,11 +13,3 @@ def filter_input(file_names):
 
 def in_dir(path):
     return [f for f in listdir(path) if isfile(join(path, f))]
-
-
-def from_file_with_list(path):
-    with open(path, 'r') as stream:
-        try:
-            print(yaml.load(stream))
-        except yaml.YAMLError as exc:
-            print(exc)
