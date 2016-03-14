@@ -2,7 +2,7 @@ $(function() {
     console.log("application start");
 
 	App = {
-		useStubs: true,
+		useStubs: false,
 		packages: [],
 		settings: {},
 		importSelectedFiles: undefined,
@@ -609,6 +609,8 @@ $(function() {
                             if (id) { //один из пакетов был выбран
                                 if (self.getPackageByProjectId(id)) {//он еще существует
                                     self.reloadPackagesList(id);
+                                } else {
+                                    self.reloadPackagesList();
                                 }
                             } else {
                                 self.reloadPackagesList();
