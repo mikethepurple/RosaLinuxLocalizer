@@ -604,13 +604,14 @@ $(function() {
                             self.packages = $.grep(self.packages, function(p){
                                  return p.status != 5;
                             });
-                            self.clearCurrentLocation();
 
                             if (id) { //один из пакетов был выбран
                                 if (self.getPackageByProjectId(id)) {//он еще существует
+                                    self.clearCurrentLocation();
                                     self.reloadPackagesList(id);
                                 } else {
                                     self.reloadPackagesList();
+                                    $(".jsOpenImportPackagesMenuItem").click();
                                 }
                             } else {
                                 self.reloadPackagesList();
