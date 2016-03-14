@@ -10,12 +10,14 @@ $(function() {
 		init: function() {
 			this.reloadPackagesList();
 			
-			$(".jsOpenSettingsMenuItem").on('click', this.openSettingsMenuItemClicked.bind(this));
 			$(".jsOpenImportPackagesMenuItem").on('click', this.openImportPageMenuItemClicked.bind(this));
+			$(".jsOpenSettingsMenuItem").on('click', this.openSettingsMenuItemClicked.bind(this));
 
             $(".jsAllPackagesAddMissedTranslatesMenuItem").on('click', this.addAllPackagesMissedTranslatesMenuItemClicked.bind(this));
             $(".jsAllPackagesCommitPatchesMenuItem").on('click', this.allPackagesCommitPatchesMenuItemClicked.bind(this));
             $(".jsAllPackagesHideLocalizedMenuItem").on('click', this.allPackagesHideLocalizedMenuItemClicked.bind(this));
+
+            $(".jsOpenImportPackagesMenuItem").click();
 		},
 
         clearCurrentLocation: function() {
@@ -452,6 +454,7 @@ $(function() {
                             });
                             self.clearCurrentLocation();
                             self.reloadPackagesList();
+                            $(".jsOpenImportPackagesMenuItem").click();
                         }
                     }
                 }
@@ -577,6 +580,12 @@ $(function() {
 
         allPackagesHideLocalizedMenuItemClicked: function(event) {
             if ($(event.target.parentNode).hasClass("disabled")) {return false;}
+
+            var id;
+            if ($(".jsPackageName") && $(".jsPackageName").data("project-id")) {
+                id = $(".jsPackageName").data("project-id");
+            }
+
             var self = this;
             bootbox.dialog({
                 message: "Скрытие удалит из списка пакеты со статусом \"Коммит патча выполнен\".",
@@ -596,7 +605,13 @@ $(function() {
                                  return p.status != 5;
                             });
                             self.clearCurrentLocation();
-                            self.reloadPackagesList();
+
+                            if (id && self.getPackageByProjectId(id)) {
+                                self.reloadPackagesList(id);
+                            } else {
+                                self.reloadPackagesList();
+                                $(".jsOpenImportPackagesMenuItem").click();
+                            }
                         }
                     }
                 }
@@ -769,7 +784,7 @@ $(function() {
         },
 
 		getPackageByProjectId: function(projectId) {
-			var res = null;
+			var res = undefined;
 			$.each(this.packages, function( index, value ) {
 				if (value.project_id === projectId) {
 					res = value;
