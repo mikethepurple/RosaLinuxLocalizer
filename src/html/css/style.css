@@ -123,8 +123,18 @@ body {
     display:none;
 }
 
+.navbar_messages_container {
+    margin: 4px;
+    text-align: center;
+}
 
-
+.success_navbar_alert {
+    display: inline-block !important;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 10px;
+}
 
 
 
