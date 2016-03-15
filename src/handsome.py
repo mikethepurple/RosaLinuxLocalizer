@@ -82,9 +82,15 @@ def full_project_info(group, filename, dyn_names):
     :return: complex dict structure
     """
     project_name = get_rpm_project_name(filename)
-    b, a = get_project_id(group, project_name)
+
+    if "(none)" == project_name:
+        return None, filename
+
+    t = get_project_id(group, project_name)
+    if t is None:
+        return None, filename
+    b, a = t
     file = read_rpm_file(filename, dyn_names)
-    status = 1
     if len(file) == 0:
         status = 3
     elif any([len(var["value"]) < 2 for b in file for var in b["strings"]]):

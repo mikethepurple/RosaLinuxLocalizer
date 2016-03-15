@@ -38,46 +38,43 @@ class Browser(QWebView):
             values = data["values"]
             return json.dumps(
                 {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in os.listdir(values) if
-                              ".rpm" in f]})
+                              ".rpm" == f[-4:] and ".src.rpm" != f[-8:]]})
         elif data["type"] == "custom":
             with_list = from_file_with_list(data["values"])
             return json.dumps(
                 {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in with_list if
-                              ".rpm" in f]})
+                              ".rpm" == f[-4:]]})
         elif data["type"] == "repo":
             values_ = data["values"][0]
             files = mirror_repo_to_tmp(values_)
-            f_ = {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in files if ".rpm" in f]}
+            f_ = {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in files if
+                               ".rpm" == f[-4:] and ".src.rpm" != f[-8:]]}
             result = json.dumps(f_)
             return result
 
+    @pyqtSlot(result=str)
+    def get_settings(self):
+        return load_settings()
 
-@pyqtSlot(result=str)
-def get_settings(self):
-    return load_settings()
+    @pyqtSlot(str, result=str)
+    def save_settings(self, settings):
+        return save_settings(settings)
 
+    @pyqtSlot(str)
+    def commit_translations_patch(self, translations):
+        pass
 
-@pyqtSlot(str, result=str)
-def save_settings(self, settings):
-    return save_settings(settings)
-
-
-@pyqtSlot(str)
-def commit_translations_patch(self, translations):
-    pass
-
-
-@pyqtSlot(int, result=str)
-def open_files(self, mode):
-    a = QFileDialog()
-    if mode == 1:
-        v = a.getOpenFileNames(caption="Импорт файлов rpm...", filter="RPM Files (*.rpm);;Any files (*.*)")
-        return json.dumps(v)
-    elif mode == 2:
-        directory = a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)
-        return json.dumps(directory)
-    elif mode == 3:
-        return json.dumps(a.getOpenFileName())
+    @pyqtSlot(int, result=str)
+    def open_files(self, mode):
+        a = QFileDialog()
+        if mode == 1:
+            v = a.getOpenFileNames(caption="Импорт файлов rpm...", filter="RPM Files (*.rpm);;Any files (*.*)")
+            return json.dumps(v)
+        elif mode == 2:
+            directory = a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)
+            return json.dumps(directory)
+        elif mode == 3:
+            return json.dumps(a.getOpenFileName())
 
 
 if __name__ == '__main__':
