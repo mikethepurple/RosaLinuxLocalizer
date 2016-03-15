@@ -10,7 +10,7 @@ from gitworks import commit_patch
 from handsome import full_project_info
 from repo_handler import mirror_repo_to_tmp
 from settings_keeper import load_settings, save_settings
-from translation import yandex_translate
+from translation import translate
 from yaml_importer import from_file_with_list
 
 
@@ -27,7 +27,7 @@ class Browser(QWebView):
     @pyqtSlot(str, result=str)
     def get_translation(self, text):
         yandex_api_key = "trnsl.1.1.20160131T164826Z.1cd5efb8cc6af7a6.0d34545e70be2a8bdd261d6cf743ae3df1429d13"
-        return json.dumps({"value": yandex_translate(yandex_api_key, "en-ru", text)})
+        return json.dumps({"value": translate(yandex_api_key, "en-ru", text)})
 
     @pyqtSlot(str, result=str)
     def import_packages(self, json_data):

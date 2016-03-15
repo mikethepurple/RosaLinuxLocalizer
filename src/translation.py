@@ -2,7 +2,7 @@ import json
 import urllib.request
 
 
-def yandex_translate(api_key, lang, text):
+def translate(api_key, lang, text):
     """
     Translates string using Yandex.translate kit
     :param api_key: required to be passed to Yandex

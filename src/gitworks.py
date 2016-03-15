@@ -22,11 +22,13 @@ def commit_patch(repo_path, package_name, patch_content, branch_name):
     print(random_str)
     print(branch_name)
     call("cd /tmp/ && git clone " + new_repo_path + " " + random_str +
-         " && cd "+random_str+" && git checkout " + branch_name, shell=True)
+         " && cd " + random_str + " && git checkout " + branch_name, shell=True)
     call("ls /tmp/" + random_str, shell=True)
     call("touch /tmp/" + random_str + "/" + random_str + ".patch", shell=True)
     with codecs.open("/tmp/" + random_str + "/" + random_str + ".patch", "w", "utf-8-sig") as temp:
         temp.write(patch_content + "\n")
+
     call("cd /tmp/" + random_str + "/ && git add " + random_str + ".patch", shell=True)
+    call("cd /tmp/" + random_str + "/ && git diff HEAD > " + random_str + ".patch", shell=True)
     call("sed -i \"1iPatch: " + random_str + ".patch\" /tmp/" + random_str + "/" + package_name + ".spec", shell=True)
     call("cd /tmp/" + random_str + " && git commit -am \"Переведено\" && git push", shell=True)
