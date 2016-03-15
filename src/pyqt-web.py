@@ -4,7 +4,7 @@ import sys
 
 from PyQt4.QtCore import QUrl, pyqtSlot
 from PyQt4.QtGui import QApplication, QFileDialog
-from PyQt4.QtWebKit import QWebView
+from PyQt4.QtWebKit import QWebView, QWebSettings, QWebInspector
 
 from gitworks import commit_patch
 from handsome import full_project_info
@@ -65,14 +65,14 @@ class Browser(QWebView):
     def save_settings(self, settings):
         return save_settings(settings)
 
-    @pyqtSlot(str)
+    @pyqtSlot(str, result=str)
     def commit_translations_patch(self, translations):
         print(translations)
         asd = json.loads(translations)
         settings = json.loads(load_settings())
         branch = [b["name"] for b in settings["branches"] if b["active"]][0]
         commit_patch(asd["git"], asd["package_name"], json.dumps(asd["desktop_files"]), branch)
-        return json.dumps("ok")
+        return json.dumps({"status": "ok"})
 
     @pyqtSlot(int, result=str)
     def open_files(self, mode):
@@ -96,8 +96,8 @@ if __name__ == '__main__':
     view.setVisible(True)
     view.setMinimumWidth(640)
     view.setMinimumHeight(480)
-    # view.page().settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
-    # inspector = QWebInspector()
-    # inspector.setPage(view.page())
-    # inspector.setVisible(True)
+    view.page().settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
+    inspector = QWebInspector()
+    inspector.setPage(view.page())
+    inspector.setVisible(True)
     app.exec_()
