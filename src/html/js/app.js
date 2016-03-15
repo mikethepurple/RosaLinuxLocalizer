@@ -863,6 +863,7 @@ $(function() {
 
         commitPackagePatch: function(packageObj) {
             var data = {
+                package_name: packageObj.package_name,
                 git: packageObj.git,
                 desktop_files: packageObj.desktop_files
             };
@@ -897,6 +898,7 @@ $(function() {
                     console.log("commit for " + packageObj.package_name);
 
                     var data = {
+                        package_name: packageObj.package_name,
                         git: packageObj.git,
                         desktop_files: packageObj.desktop_files
                     };

@@ -1,14 +1,17 @@
 import json
 import os
 import sys
+
+from PyQt4.QtCore import QUrl, pyqtSlot
 from PyQt4.QtGui import QApplication, QFileDialog
-from PyQt4.QtCore import QUrl, QObject, pyqtSlot
-from PyQt4.QtWebKit import QWebView, QWebInspector, QWebSettings
+from PyQt4.QtWebKit import QWebView
+
+from gitworks import commit_patch
 from handsome import full_project_info
-from yaml_importer import from_file_with_list
-from repo_handler import list_remote_repo, download_all_repo_files_to_temp, mirror_repo_to_tmp
+from repo_handler import mirror_repo_to_tmp
 from settings_keeper import load_settings, save_settings
 from translation import yandex_translate
+from yaml_importer import from_file_with_list
 
 
 # noinspection PyArgumentList
@@ -29,25 +32,27 @@ class Browser(QWebView):
     @pyqtSlot(str, result=str)
     def import_packages(self, json_data):
         data = json.loads(json_data)
+        settings = json.loads(load_settings())
+        group = settings["abf_projects_group"]
         if data["type"] == "files":
             values = data["values"]
             print(values)
             print(type(values))
-            return json.dumps({"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in values]})
+            return json.dumps({"packages": [full_project_info(group, f, ["Name", "Comment"]) for f in values]})
         elif data["type"] == "dir":
             values = data["values"]
             return json.dumps(
-                {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in os.listdir(values) if
+                {"packages": [full_project_info(group, f, ["Name", "Comment"]) for f in os.listdir(values) if
                               ".rpm" == f[-4:] and ".src.rpm" != f[-8:]]})
         elif data["type"] == "custom":
             with_list = from_file_with_list(data["values"])
             return json.dumps(
-                {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in with_list if
+                {"packages": [full_project_info(group, f, ["Name", "Comment"]) for f in with_list if
                               ".rpm" == f[-4:]]})
         elif data["type"] == "repo":
             values_ = data["values"][0]
             files = mirror_repo_to_tmp(values_)
-            f_ = {"packages": [full_project_info("import", f, ["Name", "Comment"]) for f in files if
+            f_ = {"packages": [full_project_info(group, f, ["Name", "Comment"]) for f in files if
                                ".rpm" == f[-4:] and ".src.rpm" != f[-8:]]}
             result = json.dumps(f_)
             return result
@@ -62,7 +67,12 @@ class Browser(QWebView):
 
     @pyqtSlot(str)
     def commit_translations_patch(self, translations):
-        pass
+        print(translations)
+        asd = json.loads(translations)
+        settings = json.loads(load_settings())
+        branch = [b["name"] for b in settings["branches"] if b["active"]][0]
+        commit_patch(asd["git"], asd["package_name"], json.dumps(asd["desktop_files"]), branch)
+        return json.dumps("ok")
 
     @pyqtSlot(int, result=str)
     def open_files(self, mode):
@@ -84,10 +94,10 @@ if __name__ == '__main__':
     view.setWindowTitle("Handsome Localizer v1.0")
     view.load(QUrl("html/main.html"))
     view.setVisible(True)
-    view.setMinimumWidth(787)
-    view.setMinimumHeight(70)
-    view.page().settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
-    inspector = QWebInspector()
-    inspector.setPage(view.page())
-    inspector.setVisible(True)
+    view.setMinimumWidth(640)
+    view.setMinimumHeight(480)
+    # view.page().settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
+    # inspector = QWebInspector()
+    # inspector.setPage(view.page())
+    # inspector.setVisible(True)
     app.exec_()
