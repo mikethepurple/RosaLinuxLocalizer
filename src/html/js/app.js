@@ -109,7 +109,7 @@ $(function() {
 
             var self = this;
 
-            this.showProccessModalPopup("Импорт пакетов...", function(event) {
+            this.showProccessModalPopup("Выполняется импорт пакетов...", function(event) {
                 if (!self.useStubs) {
                     var $form = $(".importForm");
                     var data = {
@@ -862,31 +862,36 @@ $(function() {
         },
 
         commitPackagePatch: function(packageObj) {
-            var data = {
-                package_name: packageObj.package_name,
-                git: packageObj.git,
-                desktop_files: packageObj.desktop_files
-            };
+            var self = this;
 
-            try {
-                if (!this.useStubs) {
-                    var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
-                } else {
-                    var result = {};//{error: "Error!"};
+            this.showProccessModalPopup("Выполняется коммит патча...", function(event) {
+                var data = {
+                    package_name: packageObj.package_name,
+                    git: packageObj.git,
+                    desktop_files: packageObj.desktop_files
+                };
+
+                try {
+                    if (!self.useStubs) {
+                        var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
+                    } else {
+                        var result = {};//{error: "Error!"};
+                    }
+                    if (!(result.error && result.error.length > 0)) {
+                        self.showPackageSuccessMessage("<strong>Коммит выполнен.</strong>");
+                        packageObj.status = 5;
+                        self.reloadPackagesList(packageObj.project_id);
+                        self.reloadActivePackageMenu(packageObj);
+                    } else {
+                        console.log("error while committing translations: " + result.error);
+                        self.showPackageErrorMessage('<strong>' + result.error + '</strong>');
+                    }
+                } catch (e) {
+                    console.log("error while committing translations: " + e);
+                    self.showPackageErrorMessage("<strong>Ошибка при попытке коммита!</strong> Попробуйте еще раз.");
                 }
-                if(!(result.error && result.error.length > 0)) {
-                    this.showPackageSuccessMessage("<strong>Коммит выполнен.</strong>");
-                    packageObj.status = 5;
-                    this.reloadPackagesList(packageObj.project_id);
-                    this.reloadActivePackageMenu(packageObj);
-                } else {
-                    console.log("error while committing translations: " + result.error);
-                    this.showPackageErrorMessage('<strong>' + result.error + '</strong>');
-                }
-            } catch (e) {
-                console.log("error while committing translations: " + e);
-                this.showPackageErrorMessage("<strong>Ошибка при попытке коммита!</strong> Попробуйте еще раз.");
-            }
+                self.hideProccessModalPopup();
+            });
         },
 
         commitAllPackagesPatches: function(active_package) {
