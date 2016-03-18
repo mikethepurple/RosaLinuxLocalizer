@@ -40,9 +40,9 @@ $(function() {
         openImportPageMenuItemClicked: function(event) {
 			var template = $('#importPackagesTempl').html();
 			Mustache.parse(template);
-			var rendered = Mustache.render(template, App.settings);
+			var rendered = Mustache.render(template, this.settings);
 			$('#workplace_container').html(rendered);
-			App.clearCurrentLocation();
+			this.clearCurrentLocation();
 			$(event.target).parent().addClass("active");
 
 			$(".jsOpenFilesButton").on('click', {mode: 1}, this.openFileChooserButtonClicked.bind(this));
@@ -106,64 +106,64 @@ $(function() {
             if ($(event.target).hasClass("disabled")) {return false;}
             this.hideImportMessageContainers();
 			event.preventDefault();
-			try {
-                var $modalImportLoader = $('#importModalLoader').modal('hide');
-				if (!App.useStubs) {
-					var $form = $(".importForm");
-					var data = {
-						type: $form.find(":checked").val(),
-						values: this.importSelectedFiles || [ $form.find(".jsImportRepoInput").val().trim() ]
-					};
-					this.importSelectedFiles = undefined;
-                    this.reloadImportControls();
-                    $modalImportLoader.modal('show');
-					var list = Bridge.import_packages(JSON.stringify(data));
-                    $modalImportLoader.modal('hide');
-				} else {
-                    $('#importModalLoader').modal('show');
-					var list = "{\"error\":\"\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":4334,\"rpm\":\"volatile-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile\",\"git\":\"https://abf.io/import/volatile.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console volatile jsut for fun.\"}}]}],\"status\":\"3\"},{\"project_id\":434,\"rpm\":\"pidgin2-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin2\",\"git\":\"https://abf.io/import/pidgin2.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin2.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin2\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment2 about this package.\"}}]},{\"path\":\"usr/share/desc/info2.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console2 application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":3232,\"rpm\":\"volatile2-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile2\",\"git\":\"https://abf.io/import/volatile2.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol2.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile2\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another 2comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol2.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console2 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":111111,\"rpm\":\"pidgin3-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin3\",\"git\":\"https://abf.io/import/pidgin3.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin3.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin3\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another3 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info3.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 3application for educational purposes.\"}}]}],\"status\":\"3\"},{\"project_id\":342,\"rpm\":\"volatile3-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile3\",\"git\":\"https://abf.io/import/volatile3.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol3.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile3\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another3 comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol3.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console3 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":22222,\"rpm\":\"pidgin4-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin4\",\"git\":\"https://abf.io/import/pidgin4.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin4.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin4\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another4 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info4.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 4application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":986,\"rpm\":\"volatile4-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile4\",\"git\":\"https://abf.io/import/volatile4.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol4.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile4\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another4 comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol4.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console4 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":874432,\"rpm\":\"terminology5-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology5\",\"git\":\"https://abf.io/import/terminology5.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology5.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology5\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal 5\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":543221,\"rpm\":\"pidgin5-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin5\",\"git\":\"https://abf.io/import/pidgin5.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin5.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin5\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another5 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info5.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console5 application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":123,\"rpm\":\"terminology6-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology6\",\"git\":\"https://abf.io/import/terminology6.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology6.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology6\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator6\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":456,\"rpm\":\"pidgin6-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin6\",\"git\":\"https://abf.io/import/pidgin6.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin6.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin6\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment6 about this package.\"}}]},{\"path\":\"usr/share/desc/info6.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 6application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":3211111,\"rpm\":\"terminology7-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology7\",\"git\":\"https://abf.io/import/terminology7.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology7.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology7\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator7\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":4567777,\"rpm\":\"pidgin7-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin7\",\"git\":\"https://abf.io/import/pidgin7.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin7.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"fggfggf 7\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment 7about this package.\"}}]},{\"path\":\"usr/share/desc/info7.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 7application for educational purposes.\"}}]}],\"status\":\"2\"}]}";
-					//var list = "{\"error\":\"Файл terminology-0.9.0-1-rosa2014.1.x86_64.rpm поврежден!\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]}";
-					//var list = "{\"error\":\"Файл terminology-0.9.0-1-rosa2014.1.x86_64.rpm поврежден!\"}";
-                    setTimeout(function() {
-                        $modalImportLoader.modal('hide');
-                    }, 2000);
-				}
 
-				var json_list = JSON.parse(list);
-				if (json_list.error && json_list.error.length > 0) {
-					console.log("error while importing packages: " + json_list.error);
-					this.showImportErrorMessage('<strong>' + json_list.error + '</strong>');
-				}
+            var self = this;
 
-				if (json_list.packages) {
-					var new_packages = json_list.packages;
+            this.showProccessModalPopup("Импорт пакетов...", function(event) {
+                if (!self.useStubs) {
+                    var $form = $(".importForm");
+                    var data = {
+                        type: $form.find(":checked").val(),
+                        values: self.importSelectedFiles || [ $form.find(".jsImportRepoInput").val().trim() ]
+                    };
+                    self.importSelectedFiles = undefined;
+                    self.reloadImportControls();
 
-                    var project_ids = $.map(new_packages, function(value, index) {
-                        return value.project_id;
-                    });
+                    var list = Bridge.import_packages(JSON.stringify(data));
+                } else {
+                    var list = "{\"error\":\"\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":4334,\"rpm\":\"volatile-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile\",\"git\":\"https://abf.io/import/volatile.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console volatile jsut for fun.\"}}]}],\"status\":\"3\"},{\"project_id\":434,\"rpm\":\"pidgin2-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin2\",\"git\":\"https://abf.io/import/pidgin2.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin2.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin2\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment2 about this package.\"}}]},{\"path\":\"usr/share/desc/info2.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console2 application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":3232,\"rpm\":\"volatile2-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile2\",\"git\":\"https://abf.io/import/volatile2.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol2.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile2\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another 2comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol2.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console2 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":111111,\"rpm\":\"pidgin3-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin3\",\"git\":\"https://abf.io/import/pidgin3.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin3.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin3\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another3 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info3.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 3application for educational purposes.\"}}]}],\"status\":\"3\"},{\"project_id\":342,\"rpm\":\"volatile3-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile3\",\"git\":\"https://abf.io/import/volatile3.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol3.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile3\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another3 comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol3.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console3 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":22222,\"rpm\":\"pidgin4-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin4\",\"git\":\"https://abf.io/import/pidgin4.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin4.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin4\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another4 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info4.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 4application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":986,\"rpm\":\"volatile4-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile4\",\"git\":\"https://abf.io/import/volatile4.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol4.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile4\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another4 comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol4.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console4 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":874432,\"rpm\":\"terminology5-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology5\",\"git\":\"https://abf.io/import/terminology5.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology5.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology5\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal 5\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":543221,\"rpm\":\"pidgin5-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin5\",\"git\":\"https://abf.io/import/pidgin5.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin5.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin5\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another5 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info5.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console5 application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":123,\"rpm\":\"terminology6-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology6\",\"git\":\"https://abf.io/import/terminology6.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology6.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology6\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator6\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":456,\"rpm\":\"pidgin6-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin6\",\"git\":\"https://abf.io/import/pidgin6.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin6.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin6\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment6 about this package.\"}}]},{\"path\":\"usr/share/desc/info6.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 6application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":3211111,\"rpm\":\"terminology7-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology7\",\"git\":\"https://abf.io/import/terminology7.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology7.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology7\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator7\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":4567777,\"rpm\":\"pidgin7-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin7\",\"git\":\"https://abf.io/import/pidgin7.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin7.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"fggfggf 7\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment 7about this package.\"}}]},{\"path\":\"usr/share/desc/info7.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 7application for educational purposes.\"}}]}],\"status\":\"2\"}]}";
+                    //var list = "{\"error\":\"Файл terminology-0.9.0-1-rosa2014.1.x86_64.rpm поврежден!\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]}";
+                    //var list = "{\"error\":\"Файл terminology-0.9.0-1-rosa2014.1.x86_64.rpm поврежден!\"}";
+                }
 
-                    this.packages = $.grep(this.packages, function(p, index){
-                         return $.inArray(p.project_id, project_ids) === -1;
-                    });
-
-                    this.setInitialStatuses(new_packages);
-
-					console.log(new_packages.length + " packages loaded:\n" + JSON.stringify(new_packages));
-
-                    if (App.packages) {
-                        App.packages = $.merge(App.packages, new_packages);
-                    } else {
-                        App.packages = new_packages;
+                try {
+                    var json_list = JSON.parse(list);
+                    if (json_list.error && json_list.error.length > 0) {
+                        console.log("error while importing packages: " + json_list.error);
+                        self.showImportErrorMessage('<strong>' + json_list.error + '</strong>');
                     }
 
-					App.reloadPackagesList();
+                    if (json_list.packages) {
+                        var new_packages = json_list.packages;
 
-                    this.showImportSuccessMessage("<strong>Импорт успешно завершен!</strong> Импортировано пакетов: " + new_packages.length);
-				}
-			} catch (e) {
-				console.log("error while importing packages: " + e);
-				this.showImportErrorMessage("<strong>Ошибка при импорте пакетов!</strong> Проверьте целостность данных и попробуйте еще раз.");
-			}
+                        var project_ids = $.map(new_packages, function(value, index) {
+                            return value.project_id;
+                        });
+
+                        self.packages = $.grep(self.packages, function(p, index){
+                             return $.inArray(p.project_id, project_ids) === -1;
+                        });
+
+                        self.setInitialStatuses(new_packages);
+
+                        console.log(new_packages.length + " packages loaded:\n" + JSON.stringify(new_packages));
+
+                        if (self.packages) {
+                            self.packages = $.merge(self.packages, new_packages);
+                        } else {
+                            self.packages = new_packages;
+                        }
+
+                        self.reloadPackagesList();
+
+                        self.showImportSuccessMessage("<strong>Импорт успешно завершен!</strong> Импортировано пакетов: " + new_packages.length);
+                    }
+                } catch (e) {
+                    console.log("error while importing packages: " + e);
+                    self.showImportErrorMessage("<strong>Ошибка при импорте пакетов!</strong> Проверьте целостность данных и попробуйте еще раз.");
+                }
+                self.hideProccessModalPopup();
+            });
 		},
 
         /* settings */
@@ -193,7 +193,7 @@ $(function() {
 
 			var template = $('#settingsTempl').html();
 			Mustache.parse(template);
-			var rendered = Mustache.render(template, App.settings);
+			var rendered = Mustache.render(template, this.settings);
 			$('#workplace_container').html(rendered);
 			this.clearCurrentLocation();
 			$(event.target).parent().addClass("active");
@@ -935,6 +935,19 @@ $(function() {
 
 
         /* ====   Alerts and popups  ==== */
+
+        showProccessModalPopup: function(modalText, callbackAfterShown) {
+            var $modalImportLoader = $('#modalLoader');
+            $modalImportLoader.find(".modalText").html(modalText);
+            $modalImportLoader.modal('show');
+            $modalImportLoader.on('shown.bs.modal', callbackAfterShown);
+        },
+
+        hideProccessModalPopup: function() {
+            var $modalImportLoader = $('#modalLoader');
+            $modalImportLoader.off('shown.bs.modal');
+            $modalImportLoader.modal('hide');
+        },
 
         /* import */
 
