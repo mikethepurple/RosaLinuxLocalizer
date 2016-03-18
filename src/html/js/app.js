@@ -17,6 +17,8 @@ $(function() {
             $(".jsAllPackagesCommitPatchesMenuItem").on('click', this.allPackagesCommitPatchesMenuItemClicked.bind(this));
             $(".jsAllPackagesHideLocalizedMenuItem").on('click', this.allPackagesHideLocalizedMenuItemClicked.bind(this));
 
+            $(".jsCommandsMenuItem").on('click', this.hideNavbarMessages.bind(this));
+
             $(".jsOpenImportPackagesMenuItem").click();
 		},
 
@@ -28,6 +30,8 @@ $(function() {
             if (!$activePackageCommandsMenuItem.hasClass("disabled")) {
                 $activePackageCommandsMenuItem.addClass("disabled");
             }
+
+            this.hideNavbarMessages();
 		},
 
 
@@ -56,6 +60,7 @@ $(function() {
 
         changeImportTypeRadioClicked: function(event) {
             this.hideImportMessageContainers();
+            this.hideNavbarMessages();
 			var mode = 0;
 			var type = $(event.target).val();
 			if (type == 'repo') {
@@ -83,6 +88,7 @@ $(function() {
 		},
 
 		openFileChooserButtonClicked: function(event) {
+            this.hideNavbarMessages();
 			if (this.useStubs) {
 				$(".jsImportPackagesButton").removeClass("disabled");
 				return false;
@@ -103,6 +109,7 @@ $(function() {
 		},
 
         importPackagesButtonClicked: function(event) {
+            this.hideNavbarMessages();
             if ($(event.target).hasClass("disabled")) {return false;}
             this.hideImportMessageContainers();
 			event.preventDefault();
@@ -220,6 +227,7 @@ $(function() {
 
         deleteBrunchButtonClicked: function(event) {
 			event.preventDefault();
+            this.hideNavbarMessages();
 			if ($(".branchesRadios").children().size() > 1) {
 				var $el = $(event.target).closest("button").parent();
 				var check = false;
@@ -238,6 +246,7 @@ $(function() {
 
 		addBrunchButtonClicked: function(event) {
 			event.preventDefault();
+            this.hideNavbarMessages();
 			var text = $(".jsAddBrunchField").val().trim();
 			var $er = $(".errorAddBrunchContainer");
 			var $erText = $(".errorAddBrunchText");
@@ -276,6 +285,7 @@ $(function() {
 		saveSettingsButtonClicked: function(event) {
 			event.preventDefault();
             if ($(event.target).hasClass("disabled")) {return false;}
+            this.hideNavbarMessages();
 			$form = $(".settingsForm");
 
 			var data = {
@@ -371,6 +381,7 @@ $(function() {
 
         translateFieldButtonClicked: function(event) {
 			var textEn = $(event.target).parent().prev().find("div.well").text();
+            this.hideNavbarMessages();
 			console.log(textEn);
 			var targetField = $(event.target).next();
 			var textRu = targetField.val();
@@ -463,6 +474,7 @@ $(function() {
 
         cancelPackageChangesButtonClicked: function(event) {
             event.preventDefault();
+            this.hideNavbarMessages();
             var id = event.data.id;
             var self = this;
             bootbox.dialog({
@@ -489,6 +501,7 @@ $(function() {
         saveTranslationsButtonClicked: function(event) {
             event.preventDefault();
             if ($(event.target).hasClass("disabled")) {return false;}
+            this.hideNavbarMessages();
 			$form = $(".translationsForm");
 
             var translationDesktopFiles = this.getTranslationsFromDOM();
@@ -515,6 +528,7 @@ $(function() {
         commitPackagePatchButtonClicked: function(event) {
             event.preventDefault();
             if ($(event.target).hasClass("disabled") || $(event.target.parentNode).hasClass("disabled")) {return false;}
+            this.hideNavbarMessages();
             var translationDesktopFiles = this.getTranslationsFromDOM();
             var hasEmptyStrings = this.checkEmptyStrings(translationDesktopFiles);
 
@@ -895,43 +909,85 @@ $(function() {
         },
 
         commitAllPackagesPatches: function(active_package) {
-            var success = 0;
-            var error = 0;
             var self = this;
-            $.each(this.packages, function( index, packageObj ) {
-                if (packageObj.status === 4) {
-                    console.log("commit for " + packageObj.package_name);
+            this.showProccessModalPopup("Выполняются коммиты патчей...", function(event) {
+                var success = 0;
+                var error = 0;
+                var errorText = "";
+                $.each(self.packages, function (index, packageObj) {
+                    if (packageObj.status === 4) {
+                        console.log("commit for " + packageObj.package_name);
 
-                    var data = {
-                        package_name: packageObj.package_name,
-                        git: packageObj.git,
-                        desktop_files: packageObj.desktop_files
-                    };
+                        var data = {
+                            package_name: packageObj.package_name,
+                            git: packageObj.git,
+                            desktop_files: packageObj.desktop_files
+                        };
 
-                    try {
-                        if (!self.useStubs) {
-                            var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
-                        } else {
-                            var result = {};//{error: "Error!"};
-                        }
-                        if(!(result.error && result.error.length > 0)) {
-                            success++;
-                            packageObj.status = 5;
+                        try {
+                            if (!self.useStubs) {
+                                var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
+                            } else {
+                                var result = {};//{error: "Error!"};
+                            }
+                            if (!(result.error && result.error.length > 0)) {
+                                success++;
+                                packageObj.status = 5;
 
-                        } else {
-                            console.log("error while committing translations: " + result.error);
+                            } else {
+                                console.log("error while committing translations: " + result.error);
+                                errorText = result.error;
+                                error++;
+                            }
+                        } catch (e) {
+                            console.log("error while committing translations: " + e);
+                            errorText = e;
                             error++;
                         }
-                    } catch (e) {
-                        console.log("error while committing translations: " + e);
-                        error++;
+                    }
+                });
+
+                if (error !== 0) { //есть ошибки
+                    if (errorText.trim().length > 0) {
+                        errorText = "<br><strong>Текст последней ошибки:</strong><br><pre>" + errorText + "</pre>";
+                    } else {
+                        errorText = "";
+                    }
+                    bootbox.dialog({
+                        message: "<div><span class=\"glyphicon glyphicon-ok\"></span> Успешных коммитов: <strong>" + success
+                        + "</strong><br><span class=\"glyphicon glyphicon-alert\"></span> С ошибками: <strong>" + error
+                        + "</strong></div>" + errorText,
+                        title: "В процессе коммитов возникли ошибки...",
+                        onEscape: function () {
+                        },
+                        show: true,
+                        backdrop: true,
+                        closeButton: true,
+                        animate: true,
+                        className: "show_commit_all_paches_error-text",
+                        buttons: {
+                            "Закрыть": {
+                                className: "btn-default",
+                                callback: function () {
+                                }
+                            },
+                        }
+                    });
+                } else {//нет ошибок
+                    if (success > 0) {//было закоммичено success пакетов
+                        self.showNavbarSuccessMessage("<strong>Коммиты (" + success + ") выполнены успешно</strong>");
+                    } else {//нет закоммиченых пакетов
+                        self.showNavbarInfoMessage("<strong>Нет пакетов, готовых к коммиту патча</strong>");
                     }
                 }
+
+                self.reloadPackagesList((active_package) ? active_package.project_id : undefined);
+                if (active_package) {
+                    self.reloadActivePackageMenu(active_package);
+                }
+
+                self.hideProccessModalPopup();
             });
-            this.reloadPackagesList((active_package) ? active_package.project_id : undefined);
-            if (active_package) {
-                this.reloadActivePackageMenu(active_package);
-            }
         },
 
         /* ====   End of main functions   ==== */
@@ -952,6 +1008,20 @@ $(function() {
             var $modalImportLoader = $('#modalLoader');
             $modalImportLoader.off('shown.bs.modal');
             $modalImportLoader.modal('hide');
+        },
+
+        showNavbarInfoMessage: function(info) {
+            $(".navbarMessagesContainer").html('<div class="alert-info navbar_alert"><span class="glyphicon glyphicon-info-sign"></span> ' + info + '</div>');
+            $(".navbarMessagesContainer").show();
+        },
+
+        showNavbarSuccessMessage: function(text) {
+            $(".navbarMessagesContainer").html('<div class="alert-success navbar_alert"><span class="glyphicon glyphicon-ok"></span> ' + text + '</div>');
+            $(".navbarMessagesContainer").show();
+        },
+
+        hideNavbarMessages: function() {
+            $(".navbarMessagesContainer").hide();
         },
 
         /* import */

@@ -124,11 +124,12 @@ body {
 }
 
 .navbar_messages_container {
+    display: none;
     margin: 4px;
     text-align: center;
 }
 
-.success_navbar_alert {
+.navbar_alert {
     display: inline-block !important;
     box-sizing: border-box;
     border: 1px solid transparent;
