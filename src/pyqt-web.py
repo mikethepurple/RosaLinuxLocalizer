@@ -26,33 +26,34 @@ class Browser(QWebView):
 
     @pyqtSlot(str, result=str)
     def get_translation(self, text):
-        yandex_api_key = "trnsl.1.1.20160131T164826Z.1cd5efb8cc6af7a6.0d34545e70be2a8bdd261d6cf743ae3df1429d13"
+        yandex_api_key = json.loads(load_settings())["yandex_api_key"]
         return json.dumps({"value": translate(yandex_api_key, "en-ru", text)})
 
     @pyqtSlot(str, result=str)
     def import_packages(self, json_data):
         data = json.loads(json_data)
         settings = json.loads(load_settings())
+        translatable_strings = [f["name"] for f in settings["variables"]]
         group = settings["abf_projects_group"]
         if data["type"] == "files":
             values = data["values"]
             print(values)
             print(type(values))
-            return json.dumps({"packages": [full_project_info(group, f, ["Name", "Comment"]) for f in values]})
+            return json.dumps({"packages": [full_project_info(group, f, translatable_strings) for f in values]})
         elif data["type"] == "dir":
             values = data["values"]
             return json.dumps(
-                {"packages": [full_project_info(group, f, ["Name", "Comment"]) for f in os.listdir(values) if
+                {"packages": [full_project_info(group, f, translatable_strings) for f in os.listdir(values) if
                               ".rpm" == f[-4:] and ".src.rpm" != f[-8:]]})
         elif data["type"] == "custom":
             with_list = from_file_with_list(data["values"])
             return json.dumps(
-                {"packages": [full_project_info(group, f, ["Name", "Comment"]) for f in with_list if
+                {"packages": [full_project_info(group, f, translatable_strings) for f in with_list if
                               ".rpm" == f[-4:]]})
         elif data["type"] == "repo":
             values_ = data["values"][0]
             files = mirror_repo_to_tmp(values_)
-            f_ = {"packages": [full_project_info(group, f, ["Name", "Comment"]) for f in files if
+            f_ = {"packages": [full_project_info(group, f, translatable_strings) for f in files if
                                ".rpm" == f[-4:] and ".src.rpm" != f[-8:]]}
             result = json.dumps(f_)
             return result
