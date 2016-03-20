@@ -12,7 +12,7 @@ from translation import translate
 
 
 project_group = "import"
-inner = "terminology-0.9.0-1-rosa2014.1.x86_64.rpm\ntelegram-0.9.28-2-rosa2014.1.x86_64.rpm\nbackintime-gnome-1.0.40-1-rosa2014.1.noarch.rpm"
+inner = "terminology-0.9.0-1-rosa2014.1.x86_64.rpm\nbackintime-gnome-1.0.40-1-rosa2014.1.noarch.rpm"
 yandex_api_key = "trnsl.1.1.20160131T164826Z.1cd5efb8cc6af7a6.0d34545e70be2a8bdd261d6cf743ae3df1429d13"
 
 assert translate(yandex_api_key, "en-ru",
