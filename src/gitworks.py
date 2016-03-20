@@ -34,3 +34,4 @@ def commit_patch(repo_path, package_name, patch_content, branch_name):
     call("cd /tmp/" + random_str + "/ && git add " + random_str + ".patch", shell=True)
     call("sed -i \"1iPatch: " + random_str + ".patch\" /tmp/" + random_str + "/" + package_name + ".spec", shell=True)
     call("cd /tmp/" + random_str + " && git commit -am \"Переведено\" && git push", shell=True)
+    call("cd /tmp/ && rm -rf " + random_str, shell=True)
