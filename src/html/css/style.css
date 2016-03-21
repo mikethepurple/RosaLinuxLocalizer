@@ -137,6 +137,9 @@ body {
     padding: 10px;
 }
 
+.containment_container_hided {
+    display: none;
+}
 
 
 
