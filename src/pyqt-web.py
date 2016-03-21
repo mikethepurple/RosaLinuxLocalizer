@@ -1,13 +1,14 @@
 import json
 import os
 import sys
+import uuid
 
 from PyQt5.QtCore import QUrl, pyqtSlot
 from PyQt5.QtWidgets import QApplication, QFileDialog
 from PyQt5.QtWebKit import QWebSettings
 from PyQt5.QtWebKitWidgets import QWebView, QWebInspector
 
-from gitworks import commit_patch
+from gitworks import prepare_patch
 from handsome import full_project_info
 from repo_handler import mirror_repo_to_tmp
 from settings_keeper import load_settings, save_settings
@@ -73,7 +74,8 @@ class Browser(QWebView):
         asd = json.loads(translations)
         settings = json.loads(load_settings())
         branch = [b["name"] for b in settings["branches"] if b["active"]][0]
-        commit_patch(asd["git"], asd["package_name"], json.dumps(asd["desktop_files"]), branch)
+        random_str = uuid.uuid4().hex.capitalize()
+        prepare_patch(random_str, asd["git"], asd["package_name"], json.dumps(asd["desktop_files"]), branch)
         return json.dumps({"status": "ok"})
 
     @pyqtSlot(int, result=str)
@@ -93,7 +95,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     view = Browser()
     view.setWindowTitle("Handsome Localizer v1.0")
-    view.load(QUrl("file://"+os.getcwd()+"/html/main.html"))
+    view.load(QUrl("file://" + os.getcwd() + "/html/main.html"))
     view.page().mainFrame().addToJavaScriptWindowObject("Bridge", view)
     view.setVisible(True)
     view.setMinimumWidth(768)

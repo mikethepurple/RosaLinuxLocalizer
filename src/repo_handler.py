@@ -6,6 +6,7 @@ import html.parser
 import uuid
 import posixpath
 from list_utils import filter_input
+from os import path
 
 
 class MyParser(html.parser.HTMLParser):
@@ -30,7 +31,7 @@ def download_remote_file_to_temp(new_dir, link):
 
 def download_all_repo_files_to_temp(repo_urls):
     random_str = uuid.uuid4().hex.capitalize()
-    new_dir = "/tmp/" + random_str
+    new_dir = path.expanduser('~') + "/" + random_str
     if not os.path.exists(new_dir):
         os.makedirs(new_dir)
 
