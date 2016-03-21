@@ -2,9 +2,10 @@ import json
 import os
 import sys
 
-from PyQt4.QtCore import QUrl, pyqtSlot
-from PyQt4.QtGui import QApplication, QFileDialog
-from PyQt4.QtWebKit import QWebView, QWebSettings, QWebInspector
+from PyQt5.QtCore import QUrl, pyqtSlot
+from PyQt5.QtWidgets import QApplication, QFileDialog
+from PyQt5.QtWebKit import QWebSettings
+from PyQt5.QtWebKitWidgets import QWebView, QWebInspector
 
 from gitworks import commit_patch
 from handsome import full_project_info
@@ -79,21 +80,21 @@ class Browser(QWebView):
     def open_files(self, mode):
         a = QFileDialog()
         if mode == 1:
-            v = a.getOpenFileNames(caption="Импорт файлов rpm...", filter="RPM Files (*.rpm);;Any files (*.*)")
+            v = a.getOpenFileNames(caption="Импорт файлов rpm...", filter="RPM Files (*.rpm);;Any files (*.*)")[0]
             return json.dumps(v)
         elif mode == 2:
-            directory = a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)
+            directory = a.getExistingDirectory(options=QFileDialog.ShowDirsOnly)[0]
             return json.dumps(directory)
         elif mode == 3:
-            return json.dumps(a.getOpenFileName())
+            return json.dumps(a.getOpenFileName())[0]
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     view = Browser()
-    view.page().mainFrame().addToJavaScriptWindowObject("Bridge", view)
     view.setWindowTitle("Handsome Localizer v1.0")
-    view.load(QUrl("html/main.html"))
+    view.load(QUrl("file:///home/zimy/Documents/HotProjects/RosaLinuxLocalizer/src/html/main.html"))
+    view.page().mainFrame().addToJavaScriptWindowObject("Bridge", view)
     view.setVisible(True)
     view.setMinimumWidth(768)
     view.setMinimumHeight(480)
