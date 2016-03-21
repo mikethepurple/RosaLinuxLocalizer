@@ -11,9 +11,19 @@ import uuid
 # TZ 4.1.3
 # Про архитектуру: модули и инструкции по расширению каждого модуля.
 
+import argparse
+
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('integers', metavar='N', type=int, nargs='+',
+                    help='an integer for the accumulator')
+parser.add_argument('--sum', dest='accumulate', action='store_const',
+                    const=sum, default=max,
+                    help='sum the integers (default: find the max)')
+
+args = parser.parse_args()
+print(args.accumulate(args.integers))
 
 project_group = "import"
-inner = "terminology-0.9.0-1-rosa2014.1.x86_64.rpm\nbackintime-gnome-1.0.40-1-rosa2014.1.noarch.rpm"
 yandex_api_key = "trnsl.1.1.20160131T164826Z.1cd5efb8cc6af7a6.0d34545e70be2a8bdd261d6cf743ae3df1429d13"
 
 assert translate(yandex_api_key, "en-ru",
