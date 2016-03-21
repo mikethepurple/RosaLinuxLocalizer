@@ -93,7 +93,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     view = Browser()
     view.setWindowTitle("Handsome Localizer v1.0")
-    view.load(QUrl("file:///home/zimy/Documents/HotProjects/RosaLinuxLocalizer/src/html/main.html"))
+    view.load(QUrl("file://"+os.getcwd()+"/html/main.html"))
     view.page().mainFrame().addToJavaScriptWindowObject("Bridge", view)
     view.setVisible(True)
     view.setMinimumWidth(768)
