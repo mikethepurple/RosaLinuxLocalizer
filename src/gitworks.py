@@ -32,7 +32,9 @@ def prepare_patch(random_str, repo_path, package_name, patch_content, branch_nam
             temp.write("+++" + file["path"] + "\n" + "@@ -0,0 +1,3 @@" + "\n")
             for line in file["strings"]:
                 temp.write(line["variable_name"] + "[ru]=" + line["value"]["ru"] + "\n")
-
+    for file in json.loads(patch_content):
+        with open("" + path.expanduser('~') + "/" + random_str + "/" + "somecontainment", "w") as concrete:
+            concrete.write(file["containment"])
     call("cd " + path.expanduser('~') + "/" + random_str + "/ && git add " + random_str + ".patch", shell=True)
     call("sed -i \"1iPatch: " + random_str + ".patch\" " + path.expanduser(
         '~') + "/" + random_str + "/" + package_name + ".spec", shell=True)
