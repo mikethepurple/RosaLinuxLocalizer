@@ -212,6 +212,7 @@ $(function() {
                 this.showSettingsErrorMessage("<strong>Ошибка при загрузке настроек!</strong> Целостность файла конфигурации могла быть нарушена, при сохранении настроек конфигурация перезапишется.");
 			}
 
+			$(".apiKeyTranslatorContainer").tooltip();
 			$(".variablesForTranslateContainer").tooltip();
 			$(".variablesForTranslate").tokenfield();
 
@@ -259,6 +260,10 @@ $(function() {
 				}).get();
 
 				console.log("addBrunchButtonClicked, was: " + brunches.join(", "));
+
+                if (brunches.length === 0) {
+                    $(".branchesRadios").html('');
+                }
 
 				if( $.inArray(text, brunches) == -1) {
 					var check = '';

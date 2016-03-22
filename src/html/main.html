@@ -161,25 +161,25 @@
         </div>
 		<form class="form-horizontal settingsForm">
 		  <div class="form-group">
-			<label for="inputYandexApiKey" class="col-sm-3 control-label">Yandex API Key</label>
-			<div class="col-sm-9">
-			  <input type="text" class="form-control" id="inputYandexApiKey" placeholder="Введите ключ для доступа к API Yandex.Translate..." value="{{yandex_api_key}}">
+			<label for="inputYandexApiKey" class="col-sm-3 control-label">API-ключ переводчика</label>
+			<div class="col-sm-9 apiKeyTranslatorContainer" data-placement="bottom" title='Ключ должен содержать префикс, например: "yandex:<значение_ключа>"'>
+			  <input type="text" class="form-control" id="inputYandexApiKey" placeholder="Введите ключ для доступа к API сервиса перевода..." value="{{yandex_api_key}}">
 			</div>
 		  </div>
 		  <div class="form-group">
-			<label for="inputProjectGroup" class="col-sm-3 control-label">ABF Projects Group</label>
+			<label for="inputProjectGroup" class="col-sm-3 control-label">Группа проектов ABF</label>
 			<div class="col-sm-9">
 			  <input type="text" class="form-control" id="inputProjectGroup" placeholder="Введите имя группы проектов в ABF..." value="{{abf_projects_group}}">
 			</div>
 		  </div>
 		  <div class="form-group">
-			<label for="inputLogin" class="col-sm-3 control-label">ABF Логин</label>
+			<label for="inputLogin" class="col-sm-3 control-label">Логин ABF</label>
 			<div class="col-sm-9">
 			  <input type="text" class="form-control" id="inputLogin" placeholder="Введите ваш логин в ABF..." value="{{abf_login}}">
 			</div>
 		  </div>
 		  <div class="form-group">
-			<label for="inputPassword" class="col-sm-3 control-label">ABF Пароль</label>
+			<label for="inputPassword" class="col-sm-3 control-label">Пароль ABF</label>
 			<div class="col-sm-9">
 			  <input type="password" class="form-control" id="inputPassword" placeholder="Введите ваш пароль в ABF..." value="{{abf_password}}">
 			</div>
@@ -204,6 +204,7 @@
 						<button type="button" class="close delete_branch jsDeleteBranchButton" aria-label="Remove"><span aria-hidden="true">&times;</span></button>
 					</div>
 				{{/branches}}
+				{{^branches}}Веток не добавлено.{{/branches}}
 			  </div>
 		  </div>
 		  <div class="form-group">
