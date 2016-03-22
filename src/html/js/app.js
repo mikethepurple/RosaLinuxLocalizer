@@ -17,6 +17,8 @@ $(function() {
             $(".jsAllPackagesCommitPatchesMenuItem").on('click', this.allPackagesCommitPatchesMenuItemClicked.bind(this));
             $(".jsAllPackagesHideLocalizedMenuItem").on('click', this.allPackagesHideLocalizedMenuItemClicked.bind(this));
 
+            $(".jsCommandsMenuItem").on('click', this.hideNavbarMessages.bind(this));
+
             $(".jsOpenImportPackagesMenuItem").click();
 		},
 
@@ -28,6 +30,8 @@ $(function() {
             if (!$activePackageCommandsMenuItem.hasClass("disabled")) {
                 $activePackageCommandsMenuItem.addClass("disabled");
             }
+
+            this.hideNavbarMessages();
 		},
 
 
@@ -40,9 +44,9 @@ $(function() {
         openImportPageMenuItemClicked: function(event) {
 			var template = $('#importPackagesTempl').html();
 			Mustache.parse(template);
-			var rendered = Mustache.render(template, App.settings);
+			var rendered = Mustache.render(template, this.settings);
 			$('#workplace_container').html(rendered);
-			App.clearCurrentLocation();
+			this.clearCurrentLocation();
 			$(event.target).parent().addClass("active");
 
 			$(".jsOpenFilesButton").on('click', {mode: 1}, this.openFileChooserButtonClicked.bind(this));
@@ -56,6 +60,7 @@ $(function() {
 
         changeImportTypeRadioClicked: function(event) {
             this.hideImportMessageContainers();
+            this.hideNavbarMessages();
 			var mode = 0;
 			var type = $(event.target).val();
 			if (type == 'repo') {
@@ -83,13 +88,14 @@ $(function() {
 		},
 
 		openFileChooserButtonClicked: function(event) {
+            this.hideNavbarMessages();
 			if (this.useStubs) {
 				$(".jsImportPackagesButton").removeClass("disabled");
 				return false;
 			}
             this.hideImportMessageContainers();
 			event.preventDefault();
-			console.log("openFileChooser, mode: " + event.data.mode);
+			console.log("openFileChooserButtonClicked, mode: " + event.data.mode);
             try {
                 var result = Bridge.open_files(event.data.mode);
                 this.importSelectedFiles = JSON.parse(result);//изначально выбран mode = 1
@@ -99,71 +105,75 @@ $(function() {
                 this.importSelectedFiles = undefined;
             }
             this.reloadImportControls();
+			console.log("openFileChooserButtonClicked, importSelectedFiles:");
 			console.log(this.importSelectedFiles);
 		},
 
         importPackagesButtonClicked: function(event) {
+            this.hideNavbarMessages();
             if ($(event.target).hasClass("disabled")) {return false;}
             this.hideImportMessageContainers();
 			event.preventDefault();
-			try {
-                var $modalImportLoader = $('#importModalLoader').modal('hide');
-				if (!App.useStubs) {
-					var $form = $(".importForm");
-					var data = {
-						type: $form.find(":checked").val(),
-						values: this.importSelectedFiles || [ $form.find(".jsImportRepoInput").val().trim() ]
-					};
-					this.importSelectedFiles = undefined;
-                    this.reloadImportControls();
-                    $modalImportLoader.modal('show');
-					var list = Bridge.import_packages(JSON.stringify(data));
-                    $modalImportLoader.modal('hide');
-				} else {
-                    $('#importModalLoader').modal('show');
-					var list = "{\"error\":\"\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":4334,\"rpm\":\"volatile-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile\",\"git\":\"https://abf.io/import/volatile.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console volatile jsut for fun.\"}}]}],\"status\":\"3\"},{\"project_id\":434,\"rpm\":\"pidgin2-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin2\",\"git\":\"https://abf.io/import/pidgin2.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin2.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin2\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment2 about this package.\"}}]},{\"path\":\"usr/share/desc/info2.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console2 application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":3232,\"rpm\":\"volatile2-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile2\",\"git\":\"https://abf.io/import/volatile2.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol2.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile2\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another 2comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol2.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console2 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":111111,\"rpm\":\"pidgin3-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin3\",\"git\":\"https://abf.io/import/pidgin3.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin3.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin3\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another3 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info3.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 3application for educational purposes.\"}}]}],\"status\":\"3\"},{\"project_id\":342,\"rpm\":\"volatile3-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile3\",\"git\":\"https://abf.io/import/volatile3.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol3.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile3\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another3 comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol3.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console3 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":22222,\"rpm\":\"pidgin4-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin4\",\"git\":\"https://abf.io/import/pidgin4.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin4.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin4\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another4 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info4.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 4application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":986,\"rpm\":\"volatile4-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile4\",\"git\":\"https://abf.io/import/volatile4.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol4.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile4\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another4 comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol4.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console4 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":874432,\"rpm\":\"terminology5-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology5\",\"git\":\"https://abf.io/import/terminology5.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology5.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology5\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal 5\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":543221,\"rpm\":\"pidgin5-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin5\",\"git\":\"https://abf.io/import/pidgin5.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin5.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin5\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another5 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info5.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console5 application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":123,\"rpm\":\"terminology6-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology6\",\"git\":\"https://abf.io/import/terminology6.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology6.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology6\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator6\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":456,\"rpm\":\"pidgin6-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin6\",\"git\":\"https://abf.io/import/pidgin6.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin6.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin6\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment6 about this package.\"}}]},{\"path\":\"usr/share/desc/info6.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 6application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":3211111,\"rpm\":\"terminology7-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology7\",\"git\":\"https://abf.io/import/terminology7.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology7.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology7\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator7\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":4567777,\"rpm\":\"pidgin7-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin7\",\"git\":\"https://abf.io/import/pidgin7.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin7.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"fggfggf 7\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment 7about this package.\"}}]},{\"path\":\"usr/share/desc/info7.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 7application for educational purposes.\"}}]}],\"status\":\"2\"}]}";
-					//var list = "{\"error\":\"Файл terminology-0.9.0-1-rosa2014.1.x86_64.rpm поврежден!\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]}";
-					//var list = "{\"error\":\"Файл terminology-0.9.0-1-rosa2014.1.x86_64.rpm поврежден!\"}";
-                    setTimeout(function() {
-                        $modalImportLoader.modal('hide');
-                    }, 2000);
-				}
 
-				var json_list = JSON.parse(list);
-				if (json_list.error && json_list.error.length > 0) {
-					console.log("error while importing packages: " + json_list.error);
-					this.showImportErrorMessage('<strong>' + json_list.error + '</strong>');
-				}
+            var self = this;
 
-				if (json_list.packages) {
-					var new_packages = json_list.packages;
+            this.showProccessModalPopup("Выполняется импорт пакетов...", function(event) {
+                if (!self.useStubs) {
+                    var $form = $(".importForm");
+                    var data = {
+                        type: $form.find(":checked").val(),
+                        values: self.importSelectedFiles || [ $form.find(".jsImportRepoInput").val().trim() ]
+                    };
+                    self.importSelectedFiles = undefined;
+                    self.reloadImportControls();
 
-                    var project_ids = $.map(new_packages, function(value, index) {
-                        return value.project_id;
-                    });
+                    var list = Bridge.import_packages(JSON.stringify(data));
+                } else {
+                    //var list = "{\"error\":\"\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":4334,\"rpm\":\"volatile-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile\",\"git\":\"https://abf.io/import/volatile.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console volatile jsut for fun.\"}}]}],\"status\":\"3\"},{\"project_id\":434,\"rpm\":\"pidgin2-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin2\",\"git\":\"https://abf.io/import/pidgin2.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin2.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin2\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment2 about this package.\"}}]},{\"path\":\"usr/share/desc/info2.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console2 application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":3232,\"rpm\":\"volatile2-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile2\",\"git\":\"https://abf.io/import/volatile2.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol2.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile2\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another 2comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol2.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console2 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":111111,\"rpm\":\"pidgin3-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin3\",\"git\":\"https://abf.io/import/pidgin3.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin3.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin3\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another3 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info3.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 3application for educational purposes.\"}}]}],\"status\":\"3\"},{\"project_id\":342,\"rpm\":\"volatile3-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile3\",\"git\":\"https://abf.io/import/volatile3.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol3.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile3\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another3 comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol3.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console3 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":22222,\"rpm\":\"pidgin4-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin4\",\"git\":\"https://abf.io/import/pidgin4.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin4.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin4\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another4 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info4.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 4application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":986,\"rpm\":\"volatile4-1.12.0-rosa2014.1.id586.rpm\",\"package_name\":\"volatile4\",\"git\":\"https://abf.io/import/volatile4.git\",\"desktop_files\":[{\"path\":\"usr/share/vol/vol4.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Volatile4\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another4 comment about this vol.\"}}]},{\"path\":\"usr/share/desc/vol4.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console4 volatile jsut for fun.\"}}]}],\"status\":\"1\"},{\"project_id\":874432,\"rpm\":\"terminology5-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology5\",\"git\":\"https://abf.io/import/terminology5.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology5.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology5\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal 5\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":543221,\"rpm\":\"pidgin5-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin5\",\"git\":\"https://abf.io/import/pidgin5.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin5.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin5\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another5 comment about this package.\"}}]},{\"path\":\"usr/share/desc/info5.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console5 application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":123,\"rpm\":\"terminology6-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology6\",\"git\":\"https://abf.io/import/terminology6.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology6.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology6\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator6\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":456,\"rpm\":\"pidgin6-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin6\",\"git\":\"https://abf.io/import/pidgin6.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin6.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin6\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment6 about this package.\"}}]},{\"path\":\"usr/share/desc/info6.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 6application for educational purposes.\"}}]}],\"status\":\"2\"},{\"project_id\":3211111,\"rpm\":\"terminology7-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology7\",\"git\":\"https://abf.io/import/terminology7.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology7.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology7\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator7\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":4567777,\"rpm\":\"pidgin7-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin7\",\"git\":\"https://abf.io/import/pidgin7.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin7.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"fggfggf 7\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment 7about this package.\"}}]},{\"path\":\"usr/share/desc/info7.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console 7application for educational purposes.\"}}]}],\"status\":\"2\"}]}";
+                    //var list = "{\"error\":\"Файл terminology-0.9.0-1-rosa2014.1.x86_64.rpm поврежден!\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"������������\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"�������� ���������\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}],\"status\":\"2\"}]}";
+                    //var list = "{\"error\":\"Файл terminology-0.9.0-1-rosa2014.1.x86_64.rpm поврежден!\"}";
+                    var list = "{\"error\":\"\",\"packages\":[{\"project_id\":91836,\"rpm\":\"terminology-0.9.0-1-rosa2014.1.x86_64.rpm\",\"package_name\":\"terminology\",\"git\":\"https://abf.io/import/terminology.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/terminology.desktop\",\"containment\":\"Some containment\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Terminology\",\"ru\":\"Терминология\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Terminal emulator\",\"ru\":\"Эмулятор терминала\"}}]}],\"status\":\"4\"},{\"project_id\":378627,\"rpm\":\"pidgin-1.0-rosa2014.1.i586.rpm\",\"package_name\":\"pidgin\",\"git\":\"https://abf.io/import/pidgin.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"containment\":\"Some containment two\",\"strings\":[{\"variable_name\":\"Name\",\"value\":{\"en\":\"Pidgin\"}},{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Another comment about this package.\"}}]},{\"path\":\"usr/share/desc/info.desktop\",\"containment\":\"Some containment three\",\"strings\":[{\"variable_name\":\"Comment\",\"value\":{\"en\":\"Console application for educational purposes.\"}}]}]},{\"project_id\":4837,\"rpm\":\"non-1122.0-rosa2014.1.rpm\",\"package_name\":\"empproj\",\"git\":\"https://abf.io/import/emproj.git\",\"desktop_files\":[{\"path\":\"usr/share/applications/pidgin.desktop\",\"containment\":\"\",\"strings\":[]}]}]}";
+                }
 
-                    this.packages = $.grep(this.packages, function(p, index){
-                         return $.inArray(p.project_id, project_ids) === -1;
-                    });
-
-                    this.setInitialStatuses(new_packages);
-
-					console.log(new_packages.length + " packages loaded:\n" + JSON.stringify(new_packages));
-
-                    if (App.packages) {
-                        App.packages = $.merge(App.packages, new_packages);
-                    } else {
-                        App.packages = new_packages;
+                try {
+                    var json_list = JSON.parse(list);
+                    if (json_list.error && json_list.error.length > 0) {
+                        console.log("error while importing packages: " + json_list.error);
+                        self.showImportErrorMessage('<strong>' + json_list.error + '</strong>');
                     }
 
-					App.reloadPackagesList();
+                    if (json_list.packages) {
+                        var new_packages = json_list.packages;
 
-                    this.showImportSuccessMessage("<strong>Импорт успешно завершен!</strong> Импортировано пакетов: " + new_packages.length);
-				}
-			} catch (e) {
-				console.log("error while importing packages: " + e);
-				this.showImportErrorMessage("<strong>Ошибка при импорте пакетов!</strong> Проверьте целостность данных и попробуйте еще раз.");
-			}
+                        var project_ids = $.map(new_packages, function(value, index) {
+                            return value.project_id;
+                        });
+
+                        self.packages = $.grep(self.packages, function(p, index){
+                             return $.inArray(p.project_id, project_ids) === -1;
+                        });
+
+                        self.setInitialStatuses(new_packages);
+
+                        console.log("importPackagesButtonClicked, " + new_packages.length + " packages loaded:");
+                        console.log(new_packages);
+
+                        if (self.packages) {
+                            self.packages = $.merge(self.packages, new_packages);
+                        } else {
+                            self.packages = new_packages;
+                        }
+
+                        self.reloadPackagesList();
+
+                        self.showImportSuccessMessage("<strong>Импорт успешно завершен!</strong> Импортировано пакетов: " + new_packages.length);
+                    }
+                } catch (e) {
+                    console.log("error while importing packages: " + e);
+                    self.showImportErrorMessage("<strong>Ошибка при импорте пакетов!</strong> Проверьте целостность данных и попробуйте еще раз.");
+                }
+                self.hideProccessModalPopup();
+            });
 		},
 
         /* settings */
@@ -193,7 +203,7 @@ $(function() {
 
 			var template = $('#settingsTempl').html();
 			Mustache.parse(template);
-			var rendered = Mustache.render(template, App.settings);
+			var rendered = Mustache.render(template, this.settings);
 			$('#workplace_container').html(rendered);
 			this.clearCurrentLocation();
 			$(event.target).parent().addClass("active");
@@ -202,6 +212,7 @@ $(function() {
                 this.showSettingsErrorMessage("<strong>Ошибка при загрузке настроек!</strong> Целостность файла конфигурации могла быть нарушена, при сохранении настроек конфигурация перезапишется.");
 			}
 
+			$(".apiKeyTranslatorContainer").tooltip();
 			$(".variablesForTranslateContainer").tooltip();
 			$(".variablesForTranslate").tokenfield();
 
@@ -220,6 +231,7 @@ $(function() {
 
         deleteBrunchButtonClicked: function(event) {
 			event.preventDefault();
+            this.hideNavbarMessages();
 			if ($(".branchesRadios").children().size() > 1) {
 				var $el = $(event.target).closest("button").parent();
 				var check = false;
@@ -238,6 +250,7 @@ $(function() {
 
 		addBrunchButtonClicked: function(event) {
 			event.preventDefault();
+            this.hideNavbarMessages();
 			var text = $(".jsAddBrunchField").val().trim();
 			var $er = $(".errorAddBrunchContainer");
 			var $erText = $(".errorAddBrunchText");
@@ -246,7 +259,11 @@ $(function() {
 					return $(this).find("input").val();
 				}).get();
 
-				console.log(brunches.join(", "));
+				console.log("addBrunchButtonClicked, was: " + brunches.join(", "));
+
+                if (brunches.length === 0) {
+                    $(".branchesRadios").html('');
+                }
 
 				if( $.inArray(text, brunches) == -1) {
 					var check = '';
@@ -276,6 +293,7 @@ $(function() {
 		saveSettingsButtonClicked: function(event) {
 			event.preventDefault();
             if ($(event.target).hasClass("disabled")) {return false;}
+            this.hideNavbarMessages();
 			$form = $(".settingsForm");
 
 			var data = {
@@ -317,6 +335,7 @@ $(function() {
 									data.branches = br;
 									data.variables = variablesList;
 
+                                    console.log("saveSettingsButtonClicked, settings to save:");
 									console.log(data);
 
 									try {
@@ -360,8 +379,13 @@ $(function() {
 				$(".jsPackagesListItem").removeClass("active");
 				$(event.target).addClass("active");
 			} else {
-				var id = $(event.target.parentElement).data("id");
-				$(event.target.parentElement).addClass("active");
+			    if ($(event.target.parentElement).data("id")) {
+                    var id = $(event.target.parentElement).data("id");
+                    $(event.target.parentElement).addClass("active");
+				} else {
+				    var id = $(event.target.parentElement.parentElement).data("id");
+                    $(event.target.parentElement.parentElement).addClass("active");
+				}
 			}
 
             $(".jsActivePackageCommandsMenuItem").removeClass("disabled");
@@ -371,10 +395,11 @@ $(function() {
 
         translateFieldButtonClicked: function(event) {
 			var textEn = $(event.target).parent().prev().find("div.well").text();
-			console.log(textEn);
+            this.hideNavbarMessages();
+			console.log("translateFieldButtonClicked, text(en)" + textEn);
 			var targetField = $(event.target).next();
 			var textRu = targetField.val();
-			console.log(textRu);
+			console.log("translateFieldButtonClicked, text(ru)" + textRu);
 			var self = this;
 			if (textRu.trim().length > 0) {
 				bootbox.dialog({
@@ -463,6 +488,7 @@ $(function() {
 
         cancelPackageChangesButtonClicked: function(event) {
             event.preventDefault();
+            this.hideNavbarMessages();
             var id = event.data.id;
             var self = this;
             bootbox.dialog({
@@ -489,6 +515,7 @@ $(function() {
         saveTranslationsButtonClicked: function(event) {
             event.preventDefault();
             if ($(event.target).hasClass("disabled")) {return false;}
+            this.hideNavbarMessages();
 			$form = $(".translationsForm");
 
             var translationDesktopFiles = this.getTranslationsFromDOM();
@@ -515,6 +542,7 @@ $(function() {
         commitPackagePatchButtonClicked: function(event) {
             event.preventDefault();
             if ($(event.target).hasClass("disabled") || $(event.target.parentNode).hasClass("disabled")) {return false;}
+            this.hideNavbarMessages();
             var translationDesktopFiles = this.getTranslationsFromDOM();
             var hasEmptyStrings = this.checkEmptyStrings(translationDesktopFiles);
 
@@ -535,6 +563,7 @@ $(function() {
 									className: "btn-primary",
 									callback: function() {
                                         var p = self.getPackageByProjectId($(".jsPackageName").data("project-id"));
+                                        console.log("commitPackagePatchButtonClicked, translationDesktopFiles: ");
                                         console.log(translationDesktopFiles);
                                         p.desktop_files = translationDesktopFiles;
 										self.commitPackagePatch(p);
@@ -544,7 +573,7 @@ $(function() {
                 });
             } else {
                 var p = this.getPackageByProjectId($(".jsPackageName").data("project-id"));
-                console.log(translationDesktopFiles);
+                console.log("commitPackagePatchButtonClicked, translationDesktopFiles: ");
                 p.desktop_files = translationDesktopFiles;
                 this.commitPackagePatch(p);
             }
@@ -604,13 +633,20 @@ $(function() {
                             self.packages = $.grep(self.packages, function(p){
                                  return p.status != 5;
                             });
-                            self.clearCurrentLocation();
 
-                            if (id && self.getPackageByProjectId(id)) {
-                                self.reloadPackagesList(id);
+                            if (id) { //один из пакетов был выбран
+                                var active_package = self.getPackageByProjectId(id);
+                                if (active_package) {//он еще существует
+                                    self.clearCurrentLocation();
+                                    $(".jsActivePackageCommandsMenuItem").removeClass("disabled");
+                                    self.reloadActivePackageMenu(active_package);
+                                    self.reloadPackagesList(id);
+                                } else {
+                                    self.reloadPackagesList();
+                                    $(".jsOpenImportPackagesMenuItem").click();
+                                }
                             } else {
                                 self.reloadPackagesList();
-                                $(".jsOpenImportPackagesMenuItem").click();
                             }
                         }
                     }
@@ -720,7 +756,7 @@ $(function() {
             $addTranslatesMenuItem.on('click', {id: active_package.project_id}, this.addActivePackageMissedTranslatesMenuItemClicked.bind(this));
 
             var $activePackageCommitPatchMenuItem = $(".jsActivePackageCommitPatchMenuItem");
-            if (active_package.desktop_files && active_package.desktop_files.length > 0) {
+            if (active_package.has_strings) {
                 $activePackageCommitPatchMenuItem.removeClass("disabled");
             } else {
                 if (!$activePackageCommitPatchMenuItem.hasClass("disabled")) {
@@ -759,7 +795,7 @@ $(function() {
 			var files = [];
 
 			$.each($desktopFiles, function( index, value ) {
-				var obj = {path: $(value).find(".desktopFilePath").html(), strings: []};
+				var obj = {path: $(value).find(".desktopFilePath").html(), containment: $(value).find(".containmentContainer").html(), strings: []};
 				var strs = $(value).find(".stringForTranslate");
 				var stringList = [];
 				$.each(strs, function( index, value ) {
@@ -778,6 +814,7 @@ $(function() {
 				files.push(obj);
 			});
 
+            console.log("getTranslationsFromDOM, files:");
             console.log(files);
 
             return files;
@@ -788,7 +825,14 @@ $(function() {
 			$.each(this.packages, function( index, value ) {
 				if (value.project_id === projectId) {
 					res = value;
-					res.has_desktop_files = res.desktop_files && res.desktop_files.length && (res.desktop_files.length > 0);
+					res.has_strings = false;
+					$.each(res.desktop_files, function(i, v) {
+					    if (v && v.strings && v.strings.length > 0) {
+					        res.has_strings = true;
+					        return false;
+					    }
+					});
+					console.log("getPackageByProjectId, res:");
 					console.log(res);
 					return false;
 				}
@@ -823,6 +867,7 @@ $(function() {
         checkEmptyStrings: function(desktop_files) {
             var res = false;
             $.each(desktop_files, function( index, f ) {
+                console.log("checkEmptyStrings, desktop_file:");
                 console.log(f);
                 $.each(f.strings, function( index, str ) {
                     if (!(str.value.ru && str.value.ru.trim().length > 0)) {
@@ -858,69 +903,118 @@ $(function() {
         },
 
         commitPackagePatch: function(packageObj) {
-            var data = {
-                git: packageObj.git,
-                desktop_files: packageObj.desktop_files
-            };
+            var self = this;
 
-            try {
-                if (!this.useStubs) {
-                    var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
-                } else {
-                    var result = {};//{error: "Error!"};
+            this.showProccessModalPopup("Выполняется коммит патча...", function(event) {
+                var data = {
+                    package_name: packageObj.package_name,
+                    git: packageObj.git,
+                    desktop_files: packageObj.desktop_files
+                };
+
+                try {
+                    if (!self.useStubs) {
+                        var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
+                    } else {
+                        var result = {};//{error: "Error!"};
+                    }
+                    if (!(result.error && result.error.length > 0)) {
+                        self.showPackageSuccessMessage("<strong>Коммит выполнен.</strong>");
+                        packageObj.status = 5;
+                        self.reloadPackagesList(packageObj.project_id);
+                        self.reloadActivePackageMenu(packageObj);
+                    } else {
+                        console.log("error while committing translations: " + result.error);
+                        self.showPackageErrorMessage('<strong>' + result.error + '</strong>');
+                    }
+                } catch (e) {
+                    console.log("error while committing translations: " + e);
+                    self.showPackageErrorMessage("<strong>Ошибка при попытке коммита!</strong> Попробуйте еще раз.");
                 }
-                if(!(result.error && result.error.length > 0)) {
-                    this.showPackageSuccessMessage("<strong>Коммит выполнен.</strong>");
-                    packageObj.status = 5;
-                    this.reloadPackagesList(packageObj.project_id);
-                    this.reloadActivePackageMenu(packageObj);
-                } else {
-                    console.log("error while committing translations: " + result.error);
-                    this.showPackageErrorMessage('<strong>' + result.error + '</strong>');
-                }
-            } catch (e) {
-                console.log("error while committing translations: " + e);
-                this.showPackageErrorMessage("<strong>Ошибка при попытке коммита!</strong> Попробуйте еще раз.");
-            }
+                self.hideProccessModalPopup();
+            });
         },
 
         commitAllPackagesPatches: function(active_package) {
-            var success = 0;
-            var error = 0;
             var self = this;
-            $.each(this.packages, function( index, packageObj ) {
-                if (packageObj.status === 4) {
-                    console.log("commit for " + packageObj.package_name);
+            this.showProccessModalPopup("Выполняются коммиты патчей...", function(event) {
+                var success = 0;
+                var error = 0;
+                var errorText = "";
+                $.each(self.packages, function (index, packageObj) {
+                    if (packageObj.status === 4) {
+                        console.log("commitAllPackagesPatches, commit for " + packageObj.package_name);
 
-                    var data = {
-                        git: packageObj.git,
-                        desktop_files: packageObj.desktop_files
-                    };
+                        var data = {
+                            package_name: packageObj.package_name,
+                            git: packageObj.git,
+                            desktop_files: packageObj.desktop_files
+                        };
 
-                    try {
-                        if (!self.useStubs) {
-                            var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
-                        } else {
-                            var result = {};//{error: "Error!"};
-                        }
-                        if(!(result.error && result.error.length > 0)) {
-                            success++;
-                            packageObj.status = 5;
+                        try {
+                            if (!self.useStubs) {
+                                var result = JSON.parse(Bridge.commit_translations_patch(JSON.stringify(data)));
+                            } else {
+                                var result = {};//{error: "Error!"};
+                            }
+                            if (!(result.error && result.error.length > 0)) {
+                                success++;
+                                packageObj.status = 5;
 
-                        } else {
-                            console.log("error while committing translations: " + result.error);
+                            } else {
+                                console.log("error while committing translations: " + result.error);
+                                errorText = result.error;
+                                error++;
+                            }
+                        } catch (e) {
+                            console.log("error while committing translations: " + e);
+                            errorText = e;
                             error++;
                         }
-                    } catch (e) {
-                        console.log("error while committing translations: " + e);
-                        error++;
+                    }
+                });
+
+                if (error !== 0) { //есть ошибки
+                    if (errorText.trim().length > 0) {
+                        errorText = "<br><strong>Текст последней ошибки:</strong><br><pre>" + errorText + "</pre>";
+                    } else {
+                        errorText = "";
+                    }
+                    bootbox.dialog({
+                        message: "<div><span class=\"glyphicon glyphicon-ok\"></span> Успешных коммитов: <strong>" + success
+                        + "</strong><br><span class=\"glyphicon glyphicon-alert\"></span> С ошибками: <strong>" + error
+                        + "</strong></div>" + errorText,
+                        title: "В процессе коммитов возникли ошибки...",
+                        onEscape: function () {
+                        },
+                        show: true,
+                        backdrop: true,
+                        closeButton: true,
+                        animate: true,
+                        className: "show_commit_all_paches_error-text",
+                        buttons: {
+                            "Закрыть": {
+                                className: "btn-default",
+                                callback: function () {
+                                }
+                            },
+                        }
+                    });
+                } else {//нет ошибок
+                    if (success > 0) {//было закоммичено success пакетов
+                        self.showNavbarSuccessMessage("<strong>Коммиты (" + success + ") выполнены успешно</strong>");
+                    } else {//нет закоммиченых пакетов
+                        self.showNavbarInfoMessage("<strong>Нет пакетов, готовых к коммиту патча</strong>");
                     }
                 }
+
+                self.reloadPackagesList((active_package) ? active_package.project_id : undefined);
+                if (active_package) {
+                    self.reloadActivePackageMenu(active_package);
+                }
+
+                self.hideProccessModalPopup();
             });
-            this.reloadPackagesList((active_package) ? active_package.project_id : undefined);
-            if (active_package) {
-                this.reloadActivePackageMenu(active_package);
-            }
         },
 
         /* ====   End of main functions   ==== */
@@ -929,6 +1023,33 @@ $(function() {
 
 
         /* ====   Alerts and popups  ==== */
+
+        showProccessModalPopup: function(modalText, callbackAfterShown) {
+            var $modalImportLoader = $('#modalLoader');
+            $modalImportLoader.find(".modalText").html(modalText);
+            $modalImportLoader.modal('show');
+            $modalImportLoader.on('shown.bs.modal', callbackAfterShown);
+        },
+
+        hideProccessModalPopup: function() {
+            var $modalImportLoader = $('#modalLoader');
+            $modalImportLoader.off('shown.bs.modal');
+            $modalImportLoader.modal('hide');
+        },
+
+        showNavbarInfoMessage: function(info) {
+            $(".navbarMessagesContainer").html('<div class="alert-info navbar_alert"><span class="glyphicon glyphicon-info-sign"></span> ' + info + '</div>');
+            $(".navbarMessagesContainer").show();
+        },
+
+        showNavbarSuccessMessage: function(text) {
+            $(".navbarMessagesContainer").html('<div class="alert-success navbar_alert"><span class="glyphicon glyphicon-ok"></span> ' + text + '</div>');
+            $(".navbarMessagesContainer").show();
+        },
+
+        hideNavbarMessages: function() {
+            $(".navbarMessagesContainer").hide();
+        },
 
         /* import */
 
@@ -965,7 +1086,7 @@ $(function() {
             $(window).off('resize');
             $(window).on('resize', function() {
                 var $showImportCustomHelpButton = $('.jsShowImportCustomTypeHelpButton');
-                if($showImportCustomHelpButton.data('bs.popover').tip().hasClass('in') == true) {
+                if($showImportCustomHelpButton && $showImportCustomHelpButton.data("bs.popover") && $showImportCustomHelpButton.data('bs.popover').tip().hasClass('in') == true) {
                     $showImportCustomHelpButton.popover('show');
                 }
             });

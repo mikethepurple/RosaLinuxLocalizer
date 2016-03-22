@@ -123,9 +123,23 @@ body {
     display:none;
 }
 
+.navbar_messages_container {
+    display: none;
+    margin: 4px;
+    text-align: center;
+}
 
+.navbar_alert {
+    display: inline-block !important;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 10px;
+}
 
-
+.containment_container_hided {
+    display: none;
+}
 
 
 

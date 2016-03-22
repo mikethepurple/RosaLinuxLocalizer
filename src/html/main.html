@@ -18,7 +18,7 @@
 			<li><a href="#" class="jsOpenImportPackagesMenuItem">Импорт пакетов</a></li>
 			<li><a href="#" class="jsOpenSettingsMenuItem">Настройки</a></li>
 			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Команды <span class="caret"></span></a>
+				<a href="#" class="dropdown-toggle jsCommandsMenuItem" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Команды <span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					<li class="dropdown-submenu jsActivePackageCommandsMenuItem disabled">
                         <a tabindex="-1" href="#">Текущий пакет</a>
@@ -39,6 +39,7 @@
 				</ul>
 			</li>
 		</ul>
+        <div class="navbar_messages_container navbarMessagesContainer"></div>
 	</div>
   </nav>
 
@@ -57,21 +58,18 @@
         </div>
     </div>
 
-    <div class="modal fade bs-example-modal-sm" id="importModalLoader" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
-        <div class="modal-dialog modal-sm">
+    <div class="modal fade bs-example-modal-sm" id="modalLoader" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
                         <span class="glyphicon glyphicon-time">
-                        </span> Импорт пакетов...
+                        </span> <span class="modalText"></span>
                      </h4>
                 </div>
                 <div class="modal-body">
                     <div class="progress">
-                        <div class="progress-bar progress-bar-info
-                        progress-bar-striped active"
-                        style="width: 100%">
-                        </div>
+                        <div class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%"></div>
                     </div>
                 </div>
             </div>
@@ -115,7 +113,7 @@
 			</tr>
 		</table>
 
-	    {{#has_desktop_files}}
+	    {{#has_strings}}
             <form class="translationsForm">
                 {{#desktop_files}}
                     <div class="desktopFile">
@@ -126,6 +124,7 @@
                                 <td class="col-sm-6 desktopFilePath">{{path}}</td>
                             </tr>
                         </table>
+                        <div class="containment_container_hided containmentContainer">{{containment}}</div>
                         {{#strings}}
                             <div class="stringForTranslate" data-varName="{{variable_name}}">
                                 <div class="form-group">
@@ -149,8 +148,8 @@
                   <button class="btn btn-primary jsCommitPackagePatchButton"><span class="glyphicon glyphicon-floppy-disk"></span> Коммит патча</button>
               </div>
             </form>
-        {{/has_desktop_files}}
-        {{^has_desktop_files}}<hr><h3 class="no_desktop_files">Строк для локализации не найдено</h3>{{/has_desktop_files}}
+        {{/has_strings}}
+        {{^has_strings}}<hr><h3 class="no_desktop_files">Строк для локализации не найдено</h3><div class="text-center">Возможно, переменные для поиска не настроены.</div>{{/has_strings}}
     </script>
 	
 	<script id="settingsTempl" type="x-tmpl-mustache">
@@ -162,25 +161,25 @@
         </div>
 		<form class="form-horizontal settingsForm">
 		  <div class="form-group">
-			<label for="inputYandexApiKey" class="col-sm-3 control-label">Yandex API Key</label>
-			<div class="col-sm-9">
-			  <input type="text" class="form-control" id="inputYandexApiKey" placeholder="Введите ключ для доступа к API Yandex.Translate..." value="{{yandex_api_key}}">
+			<label for="inputYandexApiKey" class="col-sm-3 control-label">API-ключ переводчика</label>
+			<div class="col-sm-9 apiKeyTranslatorContainer" data-placement="bottom" title='Ключ должен содержать префикс, например: "yandex:<значение_ключа>"'>
+			  <input type="text" class="form-control" id="inputYandexApiKey" placeholder="Введите ключ для доступа к API сервиса перевода..." value="{{yandex_api_key}}">
 			</div>
 		  </div>
 		  <div class="form-group">
-			<label for="inputProjectGroup" class="col-sm-3 control-label">ABF Projects Group</label>
+			<label for="inputProjectGroup" class="col-sm-3 control-label">Группа проектов ABF</label>
 			<div class="col-sm-9">
 			  <input type="text" class="form-control" id="inputProjectGroup" placeholder="Введите имя группы проектов в ABF..." value="{{abf_projects_group}}">
 			</div>
 		  </div>
 		  <div class="form-group">
-			<label for="inputLogin" class="col-sm-3 control-label">ABF Логин</label>
+			<label for="inputLogin" class="col-sm-3 control-label">Логин ABF</label>
 			<div class="col-sm-9">
 			  <input type="text" class="form-control" id="inputLogin" placeholder="Введите ваш логин в ABF..." value="{{abf_login}}">
 			</div>
 		  </div>
 		  <div class="form-group">
-			<label for="inputPassword" class="col-sm-3 control-label">ABF Пароль</label>
+			<label for="inputPassword" class="col-sm-3 control-label">Пароль ABF</label>
 			<div class="col-sm-9">
 			  <input type="password" class="form-control" id="inputPassword" placeholder="Введите ваш пароль в ABF..." value="{{abf_password}}">
 			</div>
@@ -205,6 +204,7 @@
 						<button type="button" class="close delete_branch jsDeleteBranchButton" aria-label="Remove"><span aria-hidden="true">&times;</span></button>
 					</div>
 				{{/branches}}
+				{{^branches}}Веток не добавлено.{{/branches}}
 			  </div>
 		  </div>
 		  <div class="form-group">

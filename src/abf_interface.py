@@ -10,6 +10,12 @@ def get_project_id(group, name):
     :return: Project ID in ABF (number)
     """
     response = urllib.request.urlopen("https://abf.io/api/v1/search.json?type=projects&query=" + name)
-    projects = json.loads(response.read().decode("UTF-8"))['results']['projects']
-    project = [x for x in projects if x['fullname'] == group + "/" + name][0]
-    return project['id'], project['git_url']
+    decode = response.read().decode("UTF-8")
+    print(decode)
+    projects = json.loads(decode)['results']['projects']
+    projects = [x for x in projects if "fullname" in x and x['fullname'] == group + "/" + name]
+    if len(projects) > 0:
+        project = projects[0]
+        return project['id'], project['git_url']
+    else:
+        return None

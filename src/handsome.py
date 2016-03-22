@@ -6,6 +6,7 @@ from os import walk
 from subprocess import call, Popen, PIPE
 
 from abf_interface import get_project_id
+from os import path
 
 
 def read_desktop(dir_name, file, dyn_names):
@@ -32,6 +33,11 @@ def read_desktop(dir_name, file, dyn_names):
     return [enchanted_en[a] for a in enchanted_en]
 
 
+def read_file(way):
+    with open(way) as d:
+        return d.readlines()
+
+
 def read_rpm_file(filename, dyn_names):
     """
     reads desktop file from supplied filename and yields list of desktop files here,
@@ -42,9 +48,9 @@ def read_rpm_file(filename, dyn_names):
     """
     random_str = uuid.uuid4().hex.capitalize()
     basename = os.path.basename(filename)
-    dir_name = "/tmp/" + random_str + "/"
+    dir_name = path.expanduser('~') + "/" + random_str + "/"
     new_name = dir_name + basename
-    os.mkdir(r"/tmp/" + random_str)
+    os.mkdir(path.expanduser('~') + "/" + random_str)
     shutil.copy(filename, new_name)
 
     call_string = "cd " + dir_name + " && rpm2cpio " + basename + " | cpio -idmv"
@@ -55,7 +61,9 @@ def read_rpm_file(filename, dyn_names):
     for (dir_path, dir_names, file_names) in walk(dir_name):
         f.extend([(dir_path + "/" + x)[len(dir_name):] for x in file_names if ".desktop" in x])
 
-    desktop_file_entries = [{"path": line, "strings": read_desktop(dir_name, line, dyn_names)} for line in f]
+    desktop_file_entries = [
+        {"path": line, "strings": read_desktop(dir_name, line, dyn_names), "containment": read_file(dir_name + line)}
+        for line in f]
 
     shutil.rmtree(dir_name)
 
@@ -82,9 +90,15 @@ def full_project_info(group, filename, dyn_names):
     :return: complex dict structure
     """
     project_name = get_rpm_project_name(filename)
-    b, a = get_project_id(group, project_name)
+
+    if "(none)" == project_name:
+        return None, filename
+
+    t = get_project_id(group, project_name)
+    if t is None:
+        return None, filename
+    b, a = t
     file = read_rpm_file(filename, dyn_names)
-    status = 1
     if len(file) == 0:
         status = 3
     elif any([len(var["value"]) < 2 for b in file for var in b["strings"]]):
