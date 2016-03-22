@@ -1,6 +1,7 @@
 # inner = sys.stdin.read()
 import json
 
+import settings_keeper
 from gitworks import prepare_patch
 from handsome import full_project_info
 from list_utils import filter_input
@@ -9,23 +10,25 @@ import uuid
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Process some integers.')
+from yaml_importer import from_file_with_list
+
+parser = argparse.ArgumentParser(description='Translate some packages')
 parser.add_argument('--git-branch')
-parser.add_argument('--with-manual-check')
-parser.add_argument('--makeall')
-parser.add_argument('--empty-strings')
-
-
+group = parser.add_mutually_exclusive_group()
+group.add_argument('--prepare', dest='target', action='store_const', const='prepare')
+group.add_argument('--translate', dest='target', action='store_const', const='translate')
+group.add_argument('--commit', dest='target', action='store_const', const='commit')
+parser.add_argument('file', metavar='filename.yml', type=str,
+                    help='an integer for the accumulator')
 args = parser.parse_args()
-print(args.accumulate(args.integers))
-
-project_group = "import"
-yandex_api_key = "trnsl.1.1.20160131T164826Z.1cd5efb8cc6af7a6.0d34545e70be2a8bdd261d6cf743ae3df1429d13"
+settings = settings_keeper.load_settings()
+project_group = settings["abf_projects_group"]
+yandex_api_key = settings["yandex_api_key"]
 
 assert translate(yandex_api_key, "en-ru",
                  "Lazy cat jumps over talking dog") == "Ленивый кот перепрыгивает через говорящая собака"
 
-for f in filter_input(inner):
+for f in from_file_with_list(args.file):
     print(full_project_info(project_group, f, ["Name", "Comment"]))
 project_info = [full_project_info(project_group, f, ["Name", "Comment"]) for f in filter_input(inner)]
 print(json.dumps(project_info))
